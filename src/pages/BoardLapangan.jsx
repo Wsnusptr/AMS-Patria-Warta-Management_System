@@ -334,7 +334,7 @@ export default function BoardLapangan() {
                     <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#111827', margin: 0 }}>{task.title}</h3>
                   </div>
 
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '24px', color: '#6B7280', fontSize: '13px', marginTop: '4px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap', color: '#6B7280', fontSize: '13px', marginTop: '4px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><MapPin size={16} />{task.location || '-'}</div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><User size={16} /><span style={{ fontWeight: 500, color: '#374151' }}>{task.assigneeEmail ? task.assigneeEmail.split('@')[0] : '-'}</span></div>
                     {task.client && <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#059669', backgroundColor: '#D1FAE5', padding: '2px 8px', borderRadius: '4px' }}><strong>Klien:</strong> {task.client}</div>}
@@ -395,7 +395,7 @@ export default function BoardLapangan() {
               </div>
 
               {/* Bottom Row: Tracker & Action */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '32px', borderTop: '1px solid #F3F4F6', paddingTop: '16px' }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px', borderTop: '1px solid #F3F4F6', paddingTop: '16px' }}>
                 <div style={{ flex: 1 }}>{renderStepper(task.status)}</div>
                 <div style={{ minWidth: '220px', display: 'flex', justifyContent: 'flex-end' }}>
                   {task.status !== 'selesai' ? (

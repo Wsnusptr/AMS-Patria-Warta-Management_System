@@ -161,15 +161,17 @@ export default function BoardSosmed() {
     const totalEmptySlotsToRender = emptySlotsRequired + extraSlotsCount;
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: isAdmin ? '40px' : '0' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: isAdmin ? '1px dashed #D1D5DB' : 'none', paddingBottom: isAdmin ? '12px' : '0' }}>
-          <h2 style={{ fontSize: '1.1rem', margin: 0, color: '#111827' }}>Tugas Harian Anda</h2>
+      <details className="card" open style={{ marginBottom: isAdmin ? '40px' : '0', padding: 0, overflow: 'hidden' }}>
+        <summary style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px', padding: '16px', cursor: 'pointer', backgroundColor: '#F9FAFB', borderBottom: '1px solid #E5E7EB', listStyle: 'none' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span style={{ fontSize: '12px', color: '#6B7280' }}>▼</span>
+            <h2 style={{ fontSize: '1.1rem', margin: 0, color: '#111827' }}>Tugas Harian Anda</h2>
+          </div>
           <span style={{ backgroundColor: myPostsToday.length >= 3 ? '#D1FAE5' : '#FEF3C7', color: myPostsToday.length >= 3 ? '#065F46' : '#92400E', padding: '4px 12px', borderRadius: '12px', fontSize: '13px', fontWeight: 600 }}>
             {myPostsToday.length >= 3 ? `${myPostsToday.length} Konten Selesai` : `${myPostsToday.length}/3 Selesai`}
           </span>
-        </div>
-
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        </summary>
+        <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
           {/* Render Completed Slots */}
           {myPostsToday.map((post, index) => (
             <div key={post.id} className="card" style={{ padding: '16px', borderLeft: '4px solid #10B981' }}>
@@ -204,8 +206,8 @@ export default function BoardSosmed() {
                 </div>
                 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  <div style={{ display: 'grid', gridTemplateColumns: '100px 1fr', gap: '12px', alignItems: 'center' }}>
-                    <label style={{ fontSize: '13px', fontWeight: 500, color: '#4B5563' }}>Platform</label>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                    <label style={{ fontSize: '12px', fontWeight: 600, color: '#4B5563' }}>Platform</label>
                     <select 
                       value={currentSlotData.platform} 
                       onChange={(e) => handleSlotChange(slotIndex, 'platform', e.target.value)}
@@ -215,8 +217,8 @@ export default function BoardSosmed() {
                     </select>
                   </div>
                   
-                  <div style={{ display: 'grid', gridTemplateColumns: '100px 1fr', gap: '12px', alignItems: 'flex-start' }}>
-                    <label style={{ fontSize: '13px', fontWeight: 500, color: '#4B5563', marginTop: '8px' }}>Judul Topik</label>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                    <label style={{ fontSize: '12px', fontWeight: 600, color: '#4B5563', marginTop: '4px' }}>Judul Topik</label>
                     <input 
                       type="text" 
                       placeholder="Sebutkan referensi topik (misal: Sesuai Instruksi Kasus X)" 
@@ -226,8 +228,8 @@ export default function BoardSosmed() {
                     />
                   </div>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: '100px 1fr', gap: '12px', alignItems: 'center' }}>
-                    <label style={{ fontSize: '13px', fontWeight: 500, color: '#4B5563' }}>Link URL Bukti</label>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                    <label style={{ fontSize: '12px', fontWeight: 600, color: '#4B5563' }}>Link URL Bukti</label>
                     <input 
                       type="text" 
                       placeholder="https://..." 
@@ -301,7 +303,7 @@ export default function BoardSosmed() {
             </div>
           )}
         </div>
-      </div>
+      </details>
     );
   };
 
@@ -314,7 +316,7 @@ export default function BoardSosmed() {
         <p style={{ margin: 0, color: '#6B7280', fontSize: '14px' }}>Sistem Penugasan Topik dan Laporan Kuota Harian</p>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)', gap: '24px', alignItems: 'start' }}>
+      <div className="grid-2" style={{ alignItems: 'start' }}>
         
         {/* PANEL KIRI: TOPIK DARI ADMIN */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>

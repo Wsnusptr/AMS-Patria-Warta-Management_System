@@ -2546,68 +2546,68 @@ table {
 }
 
 /* =========================================
-   MOBILE RESPONSIVE OVERHAUL (Cards & Modals)
+   REFINED MOBILE UI (Journalistic Minimalist)
    ========================================= */
+
+/* Table Horizontal Scroll (The Journalistic Way) */
+.data-table-container {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  width: 100%;
+  border-radius: var(--radius-md);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  margin-bottom: var(--space-4);
+  /* Optional fade edges can be added here, but keep it clean */
+}
+
+/* Ensure table doesn't squash on mobile */
+.data-table, .data-table-compact {
+  min-width: 650px; /* Force minimum width to enable horizontal scroll */
+  margin-bottom: 0;
+}
+
 @media (max-width: 768px) {
-  /* MOBILE CARDS FOR TABLES */
-  .data-table-container {
-    overflow-x: hidden;
-    background: transparent;
-    border: none;
+  /* TIGHTEN PADDINGS FOR CLEANER JOURNALISTIC LOOK */
+  .page-content {
+    padding: var(--space-3) !important;
   }
-  .data-table, .data-table-compact {
-    display: block;
-    width: 100%;
-    border: none;
-  }
-  .data-table thead, .data-table-compact thead {
-    display: none; /* Hide table headers */
-  }
-  .data-table tbody, .data-table-compact tbody {
-    display: block;
-    width: 100%;
-  }
-  .data-table tr, .data-table-compact tr {
-    display: block;
-    width: 100%;
-    margin-bottom: 12px;
-    background: var(--pw-bg-card);
-    border: 1px solid var(--pw-border-light);
-    border-radius: var(--radius-md);
-    padding: 12px 16px;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.02);
-  }
-  .data-table tbody tr:hover, .data-table-compact tbody tr:hover {
-    background: var(--pw-bg-card);
-  }
-  .data-table td, .data-table-compact td {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px dashed var(--pw-border-light);
-    padding: 8px 0 !important;
-    text-align: right !important;
-    font-size: 13px;
-  }
-  .data-table td:last-child, .data-table-compact td:last-child {
-    border-bottom: none;
-    padding-bottom: 0 !important;
-    margin-top: 4px;
-    justify-content: flex-end;
-  }
-  /* Pseudo element for labels based on data-label attribute */
-  .data-table td::before, .data-table-compact td::before {
-    content: attr(data-label);
-    font-weight: 500;
-    color: var(--pw-text-secondary);
-    text-transform: uppercase;
-    font-size: 10px;
-    letter-spacing: 0.05em;
-    text-align: left;
-    margin-right: 16px;
+  
+  .card, .card-minimal, .stat-card {
+    padding: var(--space-3) !important;
   }
 
-  /* BOTTOM SHEET MODALS */
+  .stat-card-minimal {
+    padding: var(--space-2) var(--space-3) !important;
+  }
+  
+  .page-header-title {
+    font-size: 16px !important;
+  }
+
+  .section-header h2 {
+    font-size: 14px !important;
+  }
+
+  /* BUTTONS OPTIMIZATION (Prevent wrap, scale down) */
+  .btn, .btn-primary, .btn-secondary, .btn-sm {
+    font-size: 11px !important;
+    padding: 6px 12px !important;
+    white-space: nowrap !important;
+    height: auto !important;
+    line-height: 1.2 !important;
+  }
+
+  .table-action-btn, .table-action-btn-compact {
+    width: 26px !important;
+    height: 26px !important;
+    padding: 4px !important;
+  }
+
+  .filter-bar {
+    gap: var(--space-2) !important;
+  }
+
+  /* BOTTOM SHEET MODALS (Keep the native iOS feel) */
   .modal {
     position: fixed;
     bottom: 0;
@@ -2622,6 +2622,7 @@ table {
     display: flex;
     flex-direction: column;
   }
+  
   .modal-content, form {
     overflow-y: auto;
     padding-bottom: env(safe-area-inset-bottom, 24px) !important;
@@ -2632,6 +2633,7 @@ table {
     transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     box-shadow: 2px 0 12px rgba(0,0,0,0.1);
   }
+  
   .sidebar-overlay {
     backdrop-filter: blur(4px);
     transition: opacity 0.3s ease;

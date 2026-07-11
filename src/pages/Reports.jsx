@@ -380,12 +380,13 @@ export default function Reports() {
     const totalMargin = totalIn - totalOut;
 
     return (
-      <div className="card-minimal" style={{ padding: '24px' }}>
+      <div className="card-minimal">
         <h3 style={{ margin: '0 0 16px 0', fontSize: '15px', color: '#111827', display: 'flex', justifyContent: 'space-between' }}>
           Laba/Rugi per Kategori Klien
           <span style={{ fontSize: '12px', fontWeight: 'normal', color: '#6B7280' }}>Klik baris klien untuk melihat rincian riwayat transaksi (tanggal & item)</span>
         </h3>
-        <table className="data-table-compact" style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <div className="data-table-container">
+          <table className="data-table-compact" style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
             <tr>
               <th style={{ width: '40px' }}></th>
@@ -461,7 +462,8 @@ export default function Reports() {
               </tr>
             </tfoot>
           )}
-        </table>
+          </table>
+        </div>
       </div>
     );
   };
@@ -469,9 +471,10 @@ export default function Reports() {
   const renderKinerjaSDM = () => {
     const rows = getSdmRows();
     return (
-      <div className="card-minimal" style={{ padding: '24px' }}>
+      <div className="card-minimal">
         <h3 style={{ margin: '0 0 16px 0', fontSize: '15px', color: '#111827' }}>Evaluasi & Leaderboard SDM (Tugas Lapangan)</h3>
-        <table className="data-table-compact">
+        <div className="data-table-container">
+          <table className="data-table-compact">
           <thead>
             <tr>
               <th style={{ width: '40px', textAlign: 'center' }}>Rank</th>
@@ -529,7 +532,8 @@ export default function Reports() {
               </React.Fragment>
             ))}
           </tbody>
-        </table>
+          </table>
+        </div>
       </div>
     );
   };
@@ -543,7 +547,7 @@ export default function Reports() {
     const totalComments = platforms.reduce((s, p) => s + stats[p].comments, 0);
 
     return (
-      <div className="card-minimal" style={{ padding: '24px' }}>
+      <div className="card-minimal">
         {/* Header */}
         <div style={{ marginBottom: '20px', borderBottom: '1px solid #E5E7EB', paddingBottom: '16px' }}>
           <h3 style={{ margin: '0 0 2px 0', fontSize: '13px', fontWeight: 700, color: '#111827', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Produksi Konten Sosial Media</h3>
@@ -602,8 +606,8 @@ export default function Reports() {
 
                   {/* Expanded Detail */}
                   {isExpanded && (
-                    <div style={{ borderTop: '1px solid #E5E7EB', backgroundColor: '#FAFAFA' }}>
-                      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                    <div style={{ borderTop: '1px solid #E5E7EB', backgroundColor: '#FAFAFA', overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
+                      <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '600px' }}>
                         <thead>
                           <tr style={{ borderBottom: '1px solid #E5E7EB' }}>
                             {['Tanggal', 'Judul Konten', 'Pelapor', 'Tayangan', 'Suka', 'Komentar', 'Tautan Bukti'].map((h, i) => (
@@ -647,10 +651,11 @@ export default function Reports() {
   const renderLogAktivitas = () => {
     const logsData = getLogRows();
     return (
-      <div className="card-minimal" style={{ padding: '24px' }}>
+      <div className="card-minimal">
         <h3 style={{ margin: '0 0 16px 0', fontSize: '15px', color: '#111827' }}>Jejak Digital Sistem (50 Terakhir)</h3>
         <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
-          <table className="data-table-compact">
+          <div className="data-table-container">
+            <table className="data-table-compact">
             <thead>
               <tr>
                 <th>Waktu</th>
@@ -669,7 +674,8 @@ export default function Reports() {
                 </tr>
               ))}
             </tbody>
-          </table>
+            </table>
+          </div>
         </div>
       </div>
     );
@@ -682,13 +688,13 @@ export default function Reports() {
     <div className="page-content" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', gap: '16px' }}>
       
       {/* HEADER */}
-      <div className="finance-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div className="finance-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px' }}>
         <div>
           <h1 style={{ fontSize: '18px', fontWeight: 600, margin: '0 0 2px 0', color: '#111827' }}>Laporan & Rekap Data</h1>
           <p style={{ color: '#6B7280', fontSize: '12px', margin: 0 }}>Otomatisasi pembuatan laporan agensi secara lengkap dari semua divisi</p>
         </div>
 
-        <div style={{ display: 'flex', gap: '8px' }}>
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
           <select 
             className="form-input-compact" 
             style={{ width: '150px', cursor: 'pointer' }}
@@ -707,7 +713,7 @@ export default function Reports() {
       </div>
 
       {/* TABS */}
-      <div style={{ display: 'flex', gap: '8px', borderBottom: '1px solid #E5E7EB', paddingBottom: '8px', marginBottom: '8px' }}>
+      <div style={{ display: 'flex', gap: '8px', borderBottom: '1px solid #E5E7EB', paddingBottom: '8px', marginBottom: '8px', overflowX: 'auto', whiteSpace: 'nowrap', WebkitOverflowScrolling: 'touch' }}>
         <button 
           onClick={() => setActiveTab('profitabilitas')}
           style={{ background: 'none', border: 'none', padding: '8px 16px', fontWeight: 600, fontSize: '13px', cursor: 'pointer', color: activeTab === 'profitabilitas' ? '#2563EB' : '#6B7280', borderBottom: activeTab === 'profitabilitas' ? '2px solid #2563EB' : '2px solid transparent' }}
