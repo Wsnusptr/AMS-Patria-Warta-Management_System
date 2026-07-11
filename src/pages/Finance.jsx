@@ -226,19 +226,19 @@ export default function Finance() {
               <tbody>
                 {records.map(record => (
                   <tr key={record.id}>
-                    <td style={{ whiteSpace: 'nowrap' }}>{record.date}</td>
-                    <td>
+                    <td data-label="Tanggal" style={{ whiteSpace: 'nowrap' }}>{record.date}</td>
+                    <td data-label="Tipe">
                       <span className={`badge badge-compact ${record.type === 'pemasukan' ? 'badge-green' : 'badge-red'}`}>
                         {record.type === 'pemasukan' ? 'Pemasukan' : 'Pengeluaran'}
                       </span>
                     </td>
-                    <td className="table-cell-bold">{record.category}</td>
-                    <td style={{ maxWidth: '250px' }} className="truncate" title={record.description}>{record.description || '-'}</td>
-                    <td style={{ color: record.type === 'pemasukan' ? '#10B981' : '#EF4444', fontWeight: 600 }}>
+                    <td data-label="Kategori" className="table-cell-bold">{record.category}</td>
+                    <td data-label="Deskripsi" style={{ maxWidth: '250px' }} className="truncate" title={record.description}>{record.description || '-'}</td>
+                    <td data-label="Jumlah" style={{ color: record.type === 'pemasukan' ? '#10B981' : '#EF4444', fontWeight: 600 }}>
                       {record.type === 'pemasukan' ? '+' : '-'}{formatRupiah(record.amount)}
                     </td>
-                    <td className="table-cell-muted">{record.recordedBy.split('@')[0]}</td>
-                    <td style={{ textAlign: 'right' }}>
+                    <td data-label="Dicatat" className="table-cell-muted">{record.recordedBy.split('@')[0]}</td>
+                    <td data-label="Aksi" style={{ textAlign: 'right' }}>
                       <button onClick={() => openModal(record)} className="table-action-btn-compact" title="Edit Data">
                         <Edit3 size={12} />
                       </button>

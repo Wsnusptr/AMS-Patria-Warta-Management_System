@@ -208,16 +208,16 @@ function ClientsPage() {
               <tbody>
                 {clients.map(client => (
                   <tr key={client.id}>
-                    <td className="table-cell-bold">{client.name}</td>
-                    <td>{client.contactPerson || '-'}</td>
-                    <td>{client.phone || '-'}</td>
-                    <td>{client.email || '-'}</td>
-                    <td>
+                    <td data-label="Nama Klien" className="table-cell-bold">{client.name}</td>
+                    <td data-label="Kontak Person">{client.contactPerson || '-'}</td>
+                    <td data-label="Telepon">{client.phone || '-'}</td>
+                    <td data-label="Email">{client.email || '-'}</td>
+                    <td data-label="Status">
                       <span className={`badge badge-compact ${client.status === 'Aktif' ? 'badge-green' : 'badge-gray'}`}>
                         {client.status}
                       </span>
                     </td>
-                    <td style={{ textAlign: 'right' }}>
+                    <td data-label="Aksi" style={{ textAlign: 'right' }}>
                       <button onClick={() => openModal(client)} className="table-action-btn-compact" title="Edit Klien">
                         <Edit3 size={12} />
                       </button>

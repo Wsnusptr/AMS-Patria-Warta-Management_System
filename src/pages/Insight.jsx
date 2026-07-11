@@ -727,7 +727,7 @@ export default function Insight() {
             </div>
 
             {/* ROW 2: 2 Charts side by side */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', marginBottom: '24px' }}>
+            <div className="grid-2" style={{ marginBottom: '24px' }}>
               {/* Konsistensi posting */}
               <div className="card" style={{ padding: '24px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px' }}>

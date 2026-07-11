@@ -182,14 +182,14 @@ export default function UsersPage() {
               <tbody>
                 {usersList.map(user => (
                   <tr key={user.id}>
-                    <td className="table-cell-bold">{user.name || 'Belum Diatur'}</td>
-                    <td>{user.id}</td>
-                    <td>
+                    <td data-label="Nama / Profil" className="table-cell-bold">{user.name || 'Belum Diatur'}</td>
+                    <td data-label="Alamat Email">{user.id}</td>
+                    <td data-label="Peran Sistem (Role)">
                       <span className={`badge ${getRoleBadge(user.role)}`}>
                         {getRoleLabel(user.role)}
                       </span>
                     </td>
-                    <td style={{ textAlign: 'right', display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
+                    <td data-label="Aksi" style={{ textAlign: 'right', display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
                       <button onClick={() => openModal(user)} className="table-action-btn" title="Edit Akses">
                         <Edit3 size={14} />
                       </button>
