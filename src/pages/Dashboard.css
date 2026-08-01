@@ -6,7 +6,7 @@
 .page-content {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 16px;
   height: 100%;
 }
 
@@ -35,14 +35,14 @@
 .stat-card-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
+  gap: 12px;
 }
 
 .stat-card {
-  padding: 20px;
+  padding: 16px;
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
   transition: border-color 0.2s ease;
 }
 
@@ -54,9 +54,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
-  border-radius: 10px;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
   flex-shrink: 0;
 }
 
@@ -68,14 +68,14 @@
 }
 
 .stat-card-label {
-  font-size: 13px;
+  font-size: 12px;
   color: var(--pw-text-muted);
   font-weight: 400;
   line-height: 1.3;
 }
 
 .stat-card-value {
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 600;
   color: var(--pw-text-primary);
   line-height: 1.2;
@@ -101,8 +101,8 @@
 /* --- Two-Column Layout --- */
 .dashboard-grid {
   display: grid;
-  grid-template-columns: 1fr 320px;
-  gap: 16px;
+  grid-template-columns: 1fr 280px;
+  gap: 12px;
   flex: 1;
   min-height: 0;
 }
@@ -116,7 +116,7 @@
 }
 
 .dashboard-section {
-  padding: 24px;
+  padding: 16px;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -124,10 +124,10 @@
 
 /* --- Section Header --- */
 .section-header {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--pw-text-primary);
-  margin-bottom: 20px;
+  margin-bottom: 12px;
   letter-spacing: 0.2px;
 }
 
@@ -142,7 +142,7 @@
   display: flex;
   align-items: flex-start;
   gap: 12px;
-  padding: 14px 0;
+  padding: 10px 0;
   border-bottom: 1px solid var(--pw-border);
 }
 
@@ -268,6 +268,90 @@
   font-weight: 600;
 }
 
+/* --- Insight Specific Header --- */
+.insight-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.dropdown-container {
+  position: relative;
+}
+
+.insight-filter-btn {
+  background-color: #ffffff;
+  border: 1px solid #D1D5DB;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  color: #374151;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  font-size: 13px;
+}
+
+.dropdown-icon {
+  font-size: 10px;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 8px;
+  background-color: #ffffff;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  width: 180px;
+  z-index: 50;
+}
+
+.dropdown-item {
+  width: 100%;
+  text-align: left;
+  padding: 10px 16px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #4B5563;
+  font-weight: 400;
+  font-size: 13px;
+  transition: all 0.2s;
+}
+
+.dropdown-item:hover {
+  background-color: #F9FAFB;
+}
+
+.dropdown-item.active {
+  background-color: #F3F4F6;
+  color: #111827;
+  font-weight: 600;
+}
+
+.insight-export-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 16px;
+  font-size: 13px;
+  border-radius: 8px;
+  font-weight: 600;
+  height: 100%;
+}
+
 /* --- Responsive --- */
 @media (max-width: 1024px) {
   .stat-card-grid {
@@ -281,18 +365,65 @@
 
 @media (max-width: 640px) {
   .stat-card-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
   }
 
   .dashboard-greeting {
-    font-size: 17px;
+    font-size: 16px;
+  }
+
+  .dashboard-date {
+    font-size: 11px;
   }
 
   .stat-card {
-    padding: 16px;
+    padding: 10px;
+    gap: 8px;
+  }
+  
+  .stat-card-icon {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .stat-card-value {
+    font-size: 15px;
+  }
+  
+  .stat-card-label {
+    font-size: 10px;
   }
 
   .dashboard-section {
-    padding: 18px;
+    padding: 12px;
+  }
+
+  .insight-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .header-actions {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .dropdown-container {
+    width: 100%;
+  }
+
+  .insight-filter-btn {
+    width: 100%;
+    justify-content: space-between;
+    padding: 8px 12px;
+  }
+
+  .insight-export-btn {
+    width: 100%;
+    padding: 8px 12px;
   }
 }

@@ -15,10 +15,10 @@ import {
 } from 'lucide-react';
 
 const NAV_ITEMS = [
-  { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { to: '/insight', label: 'Insight', icon: LineChart },
-  { to: '/board/lapangan', label: 'Board Lapangan', icon: ClipboardList },
-  { to: '/board/sosmed', label: 'Board Sosmed', icon: Share2 },
+  { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, roles: ['admin', 'admin_ops', 'admin_finance', 'reporter'] },
+  { to: '/insight', label: 'Insight', icon: LineChart, roles: ['admin', 'admin_ops', 'admin_finance', 'reporter'] },
+  { to: '/board/lapangan', label: 'Board Lapangan', icon: ClipboardList, roles: ['admin', 'admin_ops', 'reporter'] },
+  { to: '/board/sosmed', label: 'Board Sosmed', icon: Share2, roles: ['admin', 'admin_ops', 'reporter'] },
 ];
 
 const MANAGEMENT_ITEMS = [
@@ -26,19 +26,19 @@ const MANAGEMENT_ITEMS = [
     to: '/clients',
     label: 'Data Klien',
     icon: Building,
-    roles: ['admin', 'admin_ops', 'admin_finance'],
+    roles: ['admin', 'admin_finance'],
   },
   {
     to: '/announcements',
     label: 'Pengumuman',
     icon: ClipboardList,
-    roles: ['admin', 'admin_ops', 'admin_finance'],
+    roles: ['admin'], 
   },
   {
     to: '/finance',
     label: 'Keuangan',
     icon: Wallet,
-    roles: ['admin', 'admin_ops', 'admin_finance'],
+    roles: ['admin', 'admin_finance'],
   },
   {
     to: '/reports',
@@ -50,7 +50,7 @@ const MANAGEMENT_ITEMS = [
     to: '/users',
     label: 'Tim & Akun',
     icon: Users,
-    roles: ['admin', 'admin_ops'],
+    roles: ['admin', 'admin_finance'],
   },
 ];
 
@@ -118,7 +118,7 @@ export default function Layout() {
 
         {/* Navigation */}
         <nav className="sidebar-nav">
-          {NAV_ITEMS.map((item) => (
+          {NAV_ITEMS.filter(item => item.roles.includes(userRole)).map((item) => (
             <NavLink
               key={item.to}
               to={item.to}

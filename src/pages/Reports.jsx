@@ -690,7 +690,7 @@ export default function Reports() {
       {/* HEADER */}
       <div className="finance-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px' }}>
         <div>
-          <h1 style={{ fontSize: '18px', fontWeight: 600, margin: '0 0 2px 0', color: '#111827' }}>Laporan & Rekap Data</h1>
+          <h1 style={{ fontSize: '1.25rem', fontWeight: 600, margin: '0 0 4px 0', color: '#111827' }}>Laporan & Rekap Data</h1>
           <p style={{ color: '#6B7280', fontSize: '12px', margin: 0 }}>Otomatisasi pembuatan laporan agensi secara lengkap dari semua divisi</p>
         </div>
 

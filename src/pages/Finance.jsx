@@ -8,7 +8,7 @@ import { Plus, Edit3, Trash2, Wallet, TrendingUp, TrendingDown, Activity, AlertC
 
 export default function Finance() {
   const { currentUser, userRole } = useAuth();
-  const hasAccess = ['admin', 'admin_ops', 'admin_finance'].includes(userRole);
+  const hasAccess = ['admin', 'admin_finance'].includes(userRole);
   
   const [records, setRecords] = useState([]);
   const [clients, setClients] = useState([]);
@@ -162,7 +162,7 @@ export default function Finance() {
       {/* HEADER */}
       <div className="finance-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <h1 style={{ fontSize: '18px', fontWeight: 600, margin: '0 0 2px 0', color: '#111827' }}>Keuangan & Kas</h1>
+          <h1 style={{ fontSize: '1.25rem', fontWeight: 600, margin: '0 0 4px 0', color: '#111827' }}>Keuangan & Kas</h1>
           <p style={{ color: '#6B7280', fontSize: '12px', margin: 0 }}>Pantau arus kas, pemasukan, dan pengeluaran operasional</p>
         </div>
 

@@ -4,13 +4,19 @@ import { db } from '../services/firebase';
 import {
   LineChart, Line, AreaChart, Area, ComposedChart, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell
 } from 'recharts';
-import { Download, Loader2, X } from 'lucide-react';
+import { Download, Loader2, X, AlertCircle } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 import './Dashboard.css'; // Reuse some dashboard CSS
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import autoTable from 'jspdf-autotable';
 
 export default function Insight() {
+  const { currentUser, userRole } = useAuth();
+  const isAdmin = ['admin', 'admin_ops', 'admin_finance'].includes(userRole);
+  const isReporter = userRole === 'reporter';
+  const hasAccess = isAdmin || isReporter;
+
   const [loading, setLoading] = useState(true);
   const [activeDetail, setActiveDetail] = useState(null); // Modal state
   const chartsRef = React.useRef(null);
@@ -36,23 +42,39 @@ export default function Insight() {
   });
 
   useEffect(() => {
+    if (!hasAccess) {
+      setLoading(false);
+      return;
+    }
+    
     setLoading(true);
     const unsubTrans = onSnapshot(collection(db, 'finance_records'), (snap) => {
       setRawDocs(prev => ({ ...(prev || {postsDocs:[], tasksDocs:[]}), transDocs: snap.docs }));
       setLoading(false);
+    }, (error) => {
+      console.error("Finance records error:", error);
+      setRawDocs(prev => ({ ...(prev || {postsDocs:[], tasksDocs:[]}), transDocs: [] }));
+      setLoading(false);
     });
+    
     const unsubPosts = onSnapshot(collection(db, 'social_posts'), (snap) => {
       setRawDocs(prev => ({ ...(prev || {transDocs:[], tasksDocs:[]}), postsDocs: snap.docs }));
+    }, (error) => {
+      console.error("Social posts error:", error);
     });
+    
     const unsubTasks = onSnapshot(collection(db, 'field_tasks'), (snap) => {
       setRawDocs(prev => ({ ...(prev || {transDocs:[], postsDocs:[]}), tasksDocs: snap.docs }));
+    }, (error) => {
+      console.error("Field tasks error:", error);
     });
+    
     return () => {
       unsubTrans();
       unsubPosts();
       unsubTasks();
     };
-  }, []);
+  }, [hasAccess]);
 
   useEffect(() => {
     if (rawDocs) {
@@ -297,6 +319,17 @@ export default function Insight() {
     });
   }
 
+  if (!hasAccess) {
+    return (
+      <div className="page-content">
+        <div style={{ textAlign: 'center', padding: '64px 0', color: '#9CA3AF' }}>
+          <AlertCircle size={32} style={{ margin: '0 auto 12px auto', opacity: 0.5 }} />
+          <p style={{ margin: 0, fontSize: '15px' }}>Anda tidak memiliki akses ke halaman Insight.</p>
+        </div>
+      </div>
+    );
+  }
+
   if (loading) {
     return (
       <div className="page-content" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -538,69 +571,30 @@ export default function Insight() {
 
   return (
     <div className="page-content insight-page">
-      <div className="dashboard-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div className="dashboard-header insight-header">
         <div>
-          <h1 className="dashboard-greeting" style={{ fontSize: '2rem', marginBottom: '4px' }}>Insight</h1>
-          <p className="dashboard-date">Ringkasan performa agency bulan ini</p>
+          <h1 className="dashboard-greeting insight-title">Insight</h1>
+          <p className="dashboard-date insight-subtitle">Ringkasan performa agency bulan ini</p>
         </div>
         
-        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-          <div style={{ position: 'relative' }}>
+        <div className="header-actions">
+          <div className="dropdown-container">
             <button 
               onClick={() => setShowFilterDropdown(!showFilterDropdown)}
-              style={{ 
-                backgroundColor: '#ffffff', 
-                border: '1px solid #D1D5DB', 
-                padding: '8px 16px', 
-                borderRadius: '8px', 
-                cursor: 'pointer', 
-                fontWeight: 500,
-                color: '#374151',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)'
-              }}
+              className="btn-secondary insight-filter-btn"
             >
               {timeFilter}
-              <span style={{ fontSize: '10px' }}>▼</span>
+              <span className="dropdown-icon">▼</span>
             </button>
 
             {showFilterDropdown && (
-              <div style={{ 
-                position: 'absolute', 
-                top: '100%', 
-                right: 0, 
-                marginTop: '8px', 
-                backgroundColor: '#ffffff', 
-                border: '1px solid #E5E7EB', 
-                borderRadius: '8px', 
-                boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)', 
-                width: '180px', 
-                zIndex: 50 
-              }}>
+              <div className="dropdown-menu">
                 <ul style={{ listStyle: 'none', padding: '4px 0', margin: 0 }}>
                   {filterOptions.map(option => (
                     <li key={option}>
                       <button 
                         onClick={() => handleFilterChange(option)}
-                        style={{
-                          width: '100%',
-                          textAlign: 'left',
-                          padding: '10px 16px',
-                          background: timeFilter === option ? '#F3F4F6' : 'transparent',
-                          border: 'none',
-                          cursor: 'pointer',
-                          color: timeFilter === option ? '#111827' : '#4B5563',
-                          fontWeight: timeFilter === option ? 600 : 400,
-                          fontSize: '14px'
-                        }}
-                        onMouseEnter={(e) => {
-                          if (timeFilter !== option) e.target.style.backgroundColor = '#F9FAFB';
-                        }}
-                        onMouseLeave={(e) => {
-                          if (timeFilter !== option) e.target.style.backgroundColor = 'transparent';
-                        }}
+                        className={`dropdown-item ${timeFilter === option ? 'active' : ''}`}
                       >
                         {option}
                       </button>
@@ -611,53 +605,54 @@ export default function Insight() {
             )}
           </div>
 
-          <button 
-            onClick={handleExportPDF} 
-            disabled={isExporting}
-            className="btn-primary" 
-            style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 16px', fontSize: '14px', borderRadius: '8px', fontWeight: 600, height: '100%', opacity: isExporting ? 0.7 : 1 }}
-          >
-            {isExporting ? <Loader2 size={16} className="spinning" /> : <Download size={16} />} 
-            {isExporting ? 'Memproses...' : 'Unduh PDF'}
-          </button>
+          {!isReporter && (
+            <button 
+              onClick={handleExportPDF} 
+              disabled={isExporting}
+              className="btn-primary insight-export-btn" 
+            >
+              {isExporting ? <Loader2 size={14} className="spinning" /> : <Download size={14} />}
+              <span>Unduh PDF</span>
+            </button>
+          )}
         </div>
       </div>
 
       {/* 4 STAT CARDS */}
-          <div className="stat-card-grid" style={{ marginBottom: '24px' }}>
+          <div className="stat-card-grid" style={{ marginBottom: '16px' }}>
             <div className="card stat-card">
               <div className="stat-card-body" style={{ width: '100%' }}>
                 <span className="stat-card-label">Saldo kas</span>
-                <span className="stat-card-value" style={{ fontSize: '24px', fontWeight: 'bold' }}>{stats.saldo}</span>
+                <span className="stat-card-value" style={{ fontSize: '20px', fontWeight: 'bold' }}>{stats.saldo}</span>
               </div>
             </div>
             <div className="card stat-card">
               <div className="stat-card-body" style={{ width: '100%' }}>
                 <span className="stat-card-label">Posting sosmed</span>
-                <span className="stat-card-value" style={{ fontSize: '24px', fontWeight: 'bold' }}>{stats.posting}</span>
+                <span className="stat-card-value" style={{ fontSize: '20px', fontWeight: 'bold' }}>{stats.posting}</span>
               </div>
             </div>
             <div className="card stat-card">
               <div className="stat-card-body" style={{ width: '100%' }}>
                 <span className="stat-card-label">Liputan Lapangan (Selesai)</span>
-                <span className="stat-card-value" style={{ fontSize: '24px', fontWeight: 'bold' }}>{stats.tugasTepatWaktu}</span>
+                <span className="stat-card-value" style={{ fontSize: '20px', fontWeight: 'bold' }}>{stats.tugasTepatWaktu}</span>
               </div>
             </div>
             <div className="card stat-card">
               <div className="stat-card-body" style={{ width: '100%' }}>
                 <span className="stat-card-label">Sumber Pemasukan</span>
-                <span className="stat-card-value" style={{ fontSize: '24px', fontWeight: 'bold' }}>{stats.klienAktif}</span>
+                <span className="stat-card-value" style={{ fontSize: '20px', fontWeight: 'bold' }}>{stats.klienAktif}</span>
               </div>
             </div>
           </div>
 
           {/* CHARTS GRID */}
-          <div className="insight-charts-grid" ref={chartsRef} style={{ backgroundColor: '#f9fafb', padding: '16px', borderRadius: '12px' }}>
+          <div className="insight-charts-grid" ref={chartsRef} style={{ backgroundColor: '#f9fafb', padding: '12px', borderRadius: '8px' }}>
             
             {/* ROW 1: Arus Kas (Full Width) */}
-            <div className="card" style={{ padding: '24px', marginBottom: '24px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-                <h3 style={{ fontSize: '1.2rem' }}>Arus kas</h3>
+            <div className="card" style={{ padding: '16px', marginBottom: '16px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                <h3 style={{ fontSize: '15px' }}>Arus kas</h3>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', color: '#6B7280' }}>
                     <span style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#10B981' }}></span>
@@ -669,8 +664,8 @@ export default function Insight() {
                   </div>
                   <button 
                     onClick={() => openFullDetail('Rincian Arus Kas (Semua Bulan)', cashFlowData)}
-                    className="btn-secondary" 
-                    style={{ backgroundColor: 'var(--pw-bg-card)', border: '1px solid #E5E7EB', padding: '6px 12px', fontSize: '13px', cursor: 'pointer', borderRadius: '6px', marginLeft: '8px' }}
+                    className="btn-secondary btn-sm" 
+                    style={{ backgroundColor: 'var(--pw-bg-card)', border: '1px solid #E5E7EB', cursor: 'pointer', marginLeft: '8px' }}
                   >
                     Lihat rincian ➔
                   </button>
@@ -727,18 +722,18 @@ export default function Insight() {
             </div>
 
             {/* ROW 2: 2 Charts side by side */}
-            <div className="grid-2" style={{ marginBottom: '24px' }}>
+            <div className="grid-2" style={{ marginBottom: '16px' }}>
               {/* Konsistensi posting */}
-              <div className="card" style={{ padding: '24px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px' }}>
+              <div className="card" style={{ padding: '16px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
                   <div>
-                    <h3 style={{ fontSize: '1.2rem', marginBottom: '4px' }}>Konsistensi posting</h3>
+                    <h3 style={{ fontSize: '15px', marginBottom: '4px' }}>Konsistensi posting</h3>
                     <p style={{ color: 'var(--pw-text-secondary)', fontSize: '13px' }}>Jumlah posting per minggu</p>
                   </div>
                   <button 
                     onClick={() => openFullDetail('Rincian Posting Sosmed', socialData)}
-                    className="btn-secondary" 
-                    style={{ backgroundColor: 'var(--pw-bg-card)', border: '1px solid #E5E7EB', padding: '6px 12px', fontSize: '13px', cursor: 'pointer', borderRadius: '6px' }}
+                    className="btn-secondary btn-sm" 
+                    style={{ backgroundColor: 'var(--pw-bg-card)', border: '1px solid #E5E7EB', cursor: 'pointer' }}
                   >
                     Lihat rincian ➔
                   </button>
@@ -764,16 +759,16 @@ export default function Insight() {
               </div>
 
               {/* Beban kerja tim */}
-              <div className="card" style={{ padding: '24px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px' }}>
+              <div className="card" style={{ padding: '16px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
                   <div>
-                    <h3 style={{ fontSize: '1.2rem', marginBottom: '4px' }}>Beban kerja tim</h3>
+                    <h3 style={{ fontSize: '15px', marginBottom: '4px' }}>Beban kerja tim</h3>
                     <p style={{ color: 'var(--pw-text-secondary)', fontSize: '13px' }}>Tugas aktif dan selesai per orang</p>
                   </div>
                   <button 
                     onClick={() => openFullDetail('Rincian Tugas Tim', teamWorkload)}
-                    className="btn-secondary" 
-                    style={{ backgroundColor: 'var(--pw-bg-card)', border: '1px solid #E5E7EB', padding: '6px 12px', fontSize: '13px', cursor: 'pointer', borderRadius: '6px' }}
+                    className="btn-secondary btn-sm" 
+                    style={{ backgroundColor: 'var(--pw-bg-card)', border: '1px solid #E5E7EB', cursor: 'pointer' }}
                   >
                     Lihat rincian ➔
                   </button>
@@ -798,16 +793,16 @@ export default function Insight() {
             </div>
 
             {/* ROW 3: Kategori Pemasukan */}
-            <div className="card" style={{ padding: '24px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px' }}>
+            <div className="card" style={{ padding: '16px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
                 <div>
-                  <h3 style={{ fontSize: '1.2rem', marginBottom: '4px' }}>Sumber Pemasukan</h3>
+                  <h3 style={{ fontSize: '15px', marginBottom: '4px' }}>Sumber Pemasukan</h3>
                   <p style={{ color: 'var(--pw-text-secondary)', fontSize: '13px' }}>Persentase pemasukan berdasarkan kategori</p>
                 </div>
                 <button 
                   onClick={() => openFullDetail('Rincian Sumber Pemasukan', clientContribution)}
-                  className="btn-secondary" 
-                  style={{ backgroundColor: 'var(--pw-bg-card)', border: '1px solid #E5E7EB', padding: '6px 12px', fontSize: '13px', cursor: 'pointer', borderRadius: '6px' }}
+                  className="btn-secondary btn-sm" 
+                  style={{ backgroundColor: 'var(--pw-bg-card)', border: '1px solid #E5E7EB', cursor: 'pointer' }}
                 >
                   Lihat rincian ➔
                 </button>
@@ -839,7 +834,7 @@ export default function Insight() {
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(4px)' }}>
           <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', width: '100%', maxWidth: '700px', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)', overflow: 'hidden' }}>
             <div style={{ padding: '20px 24px', borderBottom: '1px solid #E5E7EB', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h3 style={{ fontSize: '1.2rem', fontWeight: 600, color: '#111827' }}>{activeDetail.title}</h3>
+              <h3 style={{ fontSize: '15px', fontWeight: 600, color: '#111827' }}>{activeDetail.title}</h3>
               <button onClick={() => setActiveDetail(null)} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: '#6B7280' }}>
                 <X size={20} />
               </button>
@@ -848,11 +843,11 @@ export default function Insight() {
               {activeDetail.details.length === 0 ? (
                 <p style={{ color: '#6B7280', textAlign: 'center' }}>Tidak ada rincian data.</p>
               ) : (
-                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '14px', textAlign: 'left' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px', textAlign: 'left' }}>
                   <thead>
                     <tr>
                       {Object.keys(activeDetail.details[0]).map((key, idx) => (
-                        <th key={idx} style={{ padding: '12px 8px', borderBottom: '2px solid #E5E7EB', color: '#6B7280', fontWeight: 600, textTransform: 'capitalize' }}>
+                        <th key={idx} style={{ padding: '8px', borderBottom: '2px solid #E5E7EB', color: '#6B7280', fontWeight: 600, textTransform: 'capitalize' }}>
                           {key}
                         </th>
                       ))}
@@ -862,7 +857,7 @@ export default function Insight() {
                     {activeDetail.details.map((row, idx) => (
                       <tr key={idx} style={{ borderBottom: idx === activeDetail.details.length - 1 ? 'none' : '1px solid #F3F4F6' }}>
                         {Object.values(row).map((val, colIdx) => (
-                          <td key={colIdx} style={{ padding: '12px 8px', color: colIdx === 0 ? '#111827' : '#4B5563', fontWeight: colIdx === 0 ? 500 : 400 }}>
+                          <td key={colIdx} style={{ padding: '8px', color: colIdx === 0 ? '#111827' : '#4B5563', fontWeight: colIdx === 0 ? 500 : 400 }}>
                             {val}
                           </td>
                         ))}

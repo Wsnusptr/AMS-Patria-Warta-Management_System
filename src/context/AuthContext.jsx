@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
-import { collection, query, where, getDocs } from 'firebase/firestore';
+import { doc, getDoc } from 'firebase/firestore';
 import { auth, db } from '../services/firebase';
 
 const AuthContext = createContext();
@@ -19,17 +19,20 @@ export function AuthProvider({ children }) {
       if (user) {
         setCurrentUser(user);
         // Fetch role from Firestore by Email
-        try {
-          const q = query(collection(db, 'users'), where('email', '==', user.email));
-          const querySnapshot = await getDocs(q);
-          
-          if (!querySnapshot.empty) {
-            setUserRole(querySnapshot.docs[0].data().role);
-          } else {
-            console.warn("User role not found in Firestore!");
-            setUserRole('guest'); // Fallback
-          }
-        } catch (error) {
+          try {
+            const docRef = doc(db, 'users', user.email.toLowerCase());
+            const docSnap = await getDoc(docRef);
+            
+            console.log("Email Login Saat Ini:", user.email);
+            
+            if (docSnap.exists()) {
+              console.log("Dokumen Ditemukan! Data:", docSnap.data());
+              setUserRole(docSnap.data().role);
+            } else {
+              console.warn("User role not found in Firestore untuk email:", user.email.toLowerCase());
+              setUserRole('guest'); // Fallback
+            }
+          } catch (error) {
           console.error("Error fetching user role:", error);
         }
       } else {

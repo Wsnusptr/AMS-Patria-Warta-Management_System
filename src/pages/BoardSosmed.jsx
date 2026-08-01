@@ -8,7 +8,9 @@ const PLATFORMS = ['Instagram', 'TikTok', 'YouTube', 'Facebook'];
 
 export default function BoardSosmed() {
   const { currentUser, userRole } = useAuth();
-  const isAdmin = userRole === 'admin' || userRole === 'admin_ops';
+  const isAdmin = ['admin', 'admin_ops'].includes(userRole);
+  const isReporter = userRole === 'reporter';
+  const hasAccess = isAdmin || isReporter;
   
   const [topics, setTopics] = useState([]);
   const [todaysPosts, setTodaysPosts] = useState([]);
@@ -145,6 +147,17 @@ export default function BoardSosmed() {
 
   if (loading) return <div className="page-content">Memuat data...</div>;
 
+  if (!hasAccess) {
+    return (
+      <div className="page-content">
+        <div style={{ textAlign: 'center', padding: '64px 0', color: '#9CA3AF' }}>
+          <AlertCircle size={32} style={{ margin: '0 auto 12px auto', opacity: 0.5 }} />
+          <p style={{ margin: 0, fontSize: '15px' }}>Anda tidak memiliki akses ke halaman ini.</p>
+        </div>
+      </div>
+    );
+  }
+
   // Filter post khusus untuk current user (Semua orang dapet jatah 3 slot, termasuk Admin)
   const myPostsToday = todaysPosts.filter(p => p.assigneeEmail === currentUser.email);
   
@@ -162,19 +175,19 @@ export default function BoardSosmed() {
 
     return (
       <details className="card" open style={{ marginBottom: isAdmin ? '40px' : '0', padding: 0, overflow: 'hidden' }}>
-        <summary style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px', padding: '16px', cursor: 'pointer', backgroundColor: '#F9FAFB', borderBottom: '1px solid #E5E7EB', listStyle: 'none' }}>
+        <summary style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px', padding: '12px', cursor: 'pointer', backgroundColor: '#F9FAFB', borderBottom: '1px solid #E5E7EB', listStyle: 'none' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <span style={{ fontSize: '12px', color: '#6B7280' }}>▼</span>
-            <h2 style={{ fontSize: '1.1rem', margin: 0, color: '#111827' }}>Tugas Harian Anda</h2>
+            <h2 style={{ fontSize: '15px', margin: 0, color: '#111827' }}>Tugas Harian Anda</h2>
           </div>
-          <span style={{ backgroundColor: myPostsToday.length >= 3 ? '#D1FAE5' : '#FEF3C7', color: myPostsToday.length >= 3 ? '#065F46' : '#92400E', padding: '4px 12px', borderRadius: '12px', fontSize: '13px', fontWeight: 600 }}>
+          <span style={{ backgroundColor: myPostsToday.length >= 3 ? '#D1FAE5' : '#FEF3C7', color: myPostsToday.length >= 3 ? '#065F46' : '#92400E', padding: '2px 8px', borderRadius: '12px', fontSize: '12px', fontWeight: 600 }}>
             {myPostsToday.length >= 3 ? `${myPostsToday.length} Konten Selesai` : `${myPostsToday.length}/3 Selesai`}
           </span>
         </summary>
         <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
           {/* Render Completed Slots */}
           {myPostsToday.map((post, index) => (
-            <div key={post.id} className="card" style={{ padding: '16px', borderLeft: '4px solid #10B981' }}>
+            <div key={post.id} className="card" style={{ padding: '12px', borderLeft: '4px solid #10B981' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
                 <span style={{ fontSize: '13px', fontWeight: 600, color: '#6B7280' }}>
                   {index < 3 ? `Slot ${index + 1} - Selesai` : `Slot Ekstra ${index + 1} - Selesai`}
@@ -198,7 +211,7 @@ export default function BoardSosmed() {
             const isExtra = slotIndex >= 3;
             
             return (
-              <div key={`empty-${slotIndex}`} className="card" style={{ padding: '16px', borderLeft: isExtra ? '4px solid #8B5CF6' : '4px solid #F59E0B' }}>
+              <div key={`empty-${slotIndex}`} className="card" style={{ padding: '12px', borderLeft: isExtra ? '4px solid #8B5CF6' : '4px solid #F59E0B' }}>
                 <div style={{ marginBottom: '16px' }}>
                   <span style={{ fontSize: '13px', fontWeight: 600, color: isExtra ? '#4C1D95' : '#92400E', backgroundColor: isExtra ? '#EDE9FE' : '#FEF3C7', padding: '4px 8px', borderRadius: '4px' }}>
                     {isExtra ? `Slot Ekstra - Dalam Proses` : `Slot ${slotIndex + 1} - Dalam Proses`}
@@ -211,7 +224,7 @@ export default function BoardSosmed() {
                     <select 
                       value={currentSlotData.platform} 
                       onChange={(e) => handleSlotChange(slotIndex, 'platform', e.target.value)}
-                      style={{ padding: '8px', borderRadius: '6px', border: '1px solid #D1D5DB', fontSize: '13px' }}
+                      style={{ padding: '6px 8px', borderRadius: '6px', border: '1px solid #D1D5DB', fontSize: '12px' }}
                     >
                       {PLATFORMS.map(p => <option key={p} value={p}>{p}</option>)}
                     </select>
@@ -224,7 +237,7 @@ export default function BoardSosmed() {
                       placeholder="Sebutkan referensi topik (misal: Sesuai Instruksi Kasus X)" 
                       value={currentSlotData.content}
                       onChange={(e) => handleSlotChange(slotIndex, 'content', e.target.value)}
-                      style={{ padding: '8px', borderRadius: '6px', border: '1px solid #D1D5DB', fontSize: '13px' }}
+                      style={{ padding: '6px 8px', borderRadius: '6px', border: '1px solid #D1D5DB', fontSize: '12px' }}
                     />
                   </div>
 
@@ -235,7 +248,7 @@ export default function BoardSosmed() {
                       placeholder="https://..." 
                       value={currentSlotData.proofLink}
                       onChange={(e) => handleSlotChange(slotIndex, 'proofLink', e.target.value)}
-                      style={{ padding: '8px', borderRadius: '6px', border: '1px solid #93C5FD', backgroundColor: '#EFF6FF', fontSize: '13px' }}
+                      style={{ padding: '6px 8px', borderRadius: '6px', border: '1px solid #93C5FD', backgroundColor: '#EFF6FF', fontSize: '12px' }}
                     />
                   </div>
 
@@ -247,17 +260,17 @@ export default function BoardSosmed() {
                       <input 
                         type="number" min="0" placeholder="Views" value={currentSlotData.views || ''} 
                         onChange={(e) => handleSlotChange(slotIndex, 'views', e.target.value)}
-                        style={{ width: '70px', padding: '8px', borderRadius: '6px', border: '1px solid #D1D5DB', fontSize: '13px' }}
+                        style={{ width: '70px', padding: '6px 8px', borderRadius: '6px', border: '1px solid #D1D5DB', fontSize: '12px' }}
                       />
                       <input 
                         type="number" min="0" placeholder="Likes" value={currentSlotData.likes || ''} 
                         onChange={(e) => handleSlotChange(slotIndex, 'likes', e.target.value)}
-                        style={{ width: '70px', padding: '8px', borderRadius: '6px', border: '1px solid #D1D5DB', fontSize: '13px' }}
+                        style={{ width: '70px', padding: '6px 8px', borderRadius: '6px', border: '1px solid #D1D5DB', fontSize: '12px' }}
                       />
                       <input 
                         type="number" min="0" placeholder="Komen" value={currentSlotData.comments || ''} 
                         onChange={(e) => handleSlotChange(slotIndex, 'comments', e.target.value)}
-                        style={{ width: '70px', padding: '8px', borderRadius: '6px', border: '1px solid #D1D5DB', fontSize: '13px' }}
+                        style={{ width: '70px', padding: '6px 8px', borderRadius: '6px', border: '1px solid #D1D5DB', fontSize: '12px' }}
                       />
                     </div>
                   </div>
@@ -265,8 +278,8 @@ export default function BoardSosmed() {
                   <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '8px' }}>
                     <button 
                       onClick={() => handleSubmitSlot(slotIndex)}
-                      className="btn-primary" 
-                      style={{ padding: '8px 16px', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px' }}
+                      className="btn-primary btn-sm" 
+                      style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
                     >
                       <Send size={14} /> Laporkan Selesai
                     </button>
@@ -278,15 +291,15 @@ export default function BoardSosmed() {
 
           {/* Banner Success & Extra Slot Button */}
           {myPostsToday.length >= 3 && extraSlotsCount === 0 ? (
-            <div className="card" style={{ padding: '24px', textAlign: 'center', backgroundColor: '#F0FDF4', border: '1px solid #BBF7D0', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
+            <div className="card" style={{ padding: '16px', textAlign: 'center', backgroundColor: '#F0FDF4', border: '1px solid #BBF7D0', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
               <div>
                 <CheckCircle2 size={32} color="#10B981" style={{ margin: '0 auto' }} />
                 <p style={{ margin: '8px 0 0 0', color: '#065F46', fontWeight: 600, fontSize: '14px' }}>Luar biasa! Target 3 postingan hari ini sudah selesai.</p>
               </div>
               <button 
                 onClick={() => setExtraSlotsCount(prev => prev + 1)} 
-                className="btn-primary" 
-                style={{ backgroundColor: '#059669', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', padding: '8px 16px', borderRadius: '8px' }}
+                className="btn-success btn-sm" 
+                style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
               >
                 <Award size={16} /> Lapor Konten Ekstra
               </button>
@@ -295,8 +308,8 @@ export default function BoardSosmed() {
             <div style={{ display: 'flex', justifyContent: 'center', marginTop: '8px' }}>
                <button 
                 onClick={() => setExtraSlotsCount(prev => prev + 1)} 
-                className="btn-secondary" 
-                style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', padding: '8px 16px', borderRadius: '8px', border: '1px dashed #8B5CF6', color: '#6D28D9', backgroundColor: '#F5F3FF' }}
+                className="btn-secondary btn-sm" 
+                style={{ display: 'flex', alignItems: 'center', gap: '6px', border: '1px dashed #8B5CF6', color: '#6D28D9', backgroundColor: '#F5F3FF' }}
               >
                 <Plus size={16} /> Tambah Slot Ekstra (Lembur / Rajin)
               </button>
@@ -311,9 +324,9 @@ export default function BoardSosmed() {
     <div className="page-content" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', gap: '24px' }}>
       
       {/* HEADER */}
-      <div style={{ borderBottom: '1px solid #E5E7EB', paddingBottom: '16px', marginBottom: '8px' }}>
-        <h1 style={{ fontSize: '1.5rem', margin: '0 0 4px 0', color: '#111827' }}>Manajemen Konten & Sosmed</h1>
-        <p style={{ margin: 0, color: '#6B7280', fontSize: '14px' }}>Sistem Penugasan Topik dan Laporan Kuota Harian</p>
+      <div style={{ borderBottom: '1px solid #E5E7EB', paddingBottom: '12px', marginBottom: '8px' }}>
+        <h1 style={{ fontSize: '1.25rem', margin: '0 0 4px 0', color: '#111827' }}>Manajemen Konten & Sosmed</h1>
+        <p style={{ margin: 0, color: '#6B7280', fontSize: '13px' }}>Sistem Penugasan Topik dan Laporan Kuota Harian</p>
       </div>
 
       <div className="grid-2" style={{ alignItems: 'start' }}>
@@ -321,34 +334,34 @@ export default function BoardSosmed() {
         {/* PANEL KIRI: TOPIK DARI ADMIN */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <h2 style={{ fontSize: '1.1rem', margin: 0, color: '#111827' }}>Instruksi Topik Aktif</h2>
+            <h2 style={{ fontSize: '15px', margin: 0, color: '#111827' }}>Instruksi Topik Aktif</h2>
             {isAdmin && !isCreatingTopic && (
-              <button onClick={() => setIsCreatingTopic(true)} className="btn-primary" style={{ padding: '6px 12px', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <Plus size={16} /> Topik Baru
+              <button onClick={() => setIsCreatingTopic(true)} className="btn-primary btn-sm" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <Plus size={14} /> Topik Baru
               </button>
             )}
           </div>
 
           {isCreatingTopic && (
-            <div className="card" style={{ padding: '16px', backgroundColor: '#F9FAFB' }}>
+            <div className="card" style={{ padding: '12px', backgroundColor: '#F9FAFB' }}>
               <form onSubmit={handleCreateTopic} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 <input 
                   type="text" 
                   placeholder="Judul Topik (Contoh: Berita Politik Kasus X)" 
                   value={newTopic.title}
                   onChange={e => setNewTopic({...newTopic, title: e.target.value})}
-                  style={{ padding: '8px 12px', borderRadius: '6px', border: '1px solid #D1D5DB' }}
+                  style={{ padding: '6px 8px', borderRadius: '6px', border: '1px solid #D1D5DB' }}
                   required
                 />
                 <textarea 
                   placeholder="Instruksi detail..." 
                   value={newTopic.description}
                   onChange={e => setNewTopic({...newTopic, description: e.target.value})}
-                  style={{ padding: '8px 12px', borderRadius: '6px', border: '1px solid #D1D5DB', minHeight: '80px', resize: 'vertical' }}
+                  style={{ padding: '6px 8px', borderRadius: '6px', border: '1px solid #D1D5DB', minHeight: '80px', resize: 'vertical' }}
                 />
                 <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-                  <button type="button" onClick={() => setIsCreatingTopic(false)} className="btn-secondary" style={{ padding: '6px 12px', fontSize: '13px' }}>Batal</button>
-                  <button type="submit" className="btn-primary" style={{ padding: '6px 12px', fontSize: '13px' }}>Simpan Topik</button>
+                  <button type="button" onClick={() => setIsCreatingTopic(false)} className="btn-secondary btn-sm">Batal</button>
+                  <button type="submit" className="btn-primary btn-sm">Simpan Topik</button>
                 </div>
               </form>
             </div>
@@ -356,10 +369,10 @@ export default function BoardSosmed() {
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             {topics.length === 0 ? (
-              <div className="card" style={{ padding: '24px', textAlign: 'center', color: '#6B7280' }}>Belum ada topik aktif.</div>
+              <div className="card" style={{ padding: '16px', textAlign: 'center', color: '#6B7280' }}>Belum ada topik aktif.</div>
             ) : (
               topics.map(topic => (
-                <div key={topic.id} className="card" style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <div key={topic.id} className="card" style={{ padding: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                     <h3 style={{ margin: 0, fontSize: '15px', color: '#111827' }}>{topic.title}</h3>
                     {isAdmin && (
@@ -378,8 +391,8 @@ export default function BoardSosmed() {
         {/* MONITORING SELURUH TIM (HANYA MUNCUL UNTUK ADMIN) */}
         {isAdmin && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '16px' }}>
-              <h2 style={{ fontSize: '1.1rem', margin: 0, color: '#111827' }}>Monitoring Kuota Tim Hari Ini</h2>
-              <div className="card" style={{ padding: '16px' }}>
+              <h2 style={{ fontSize: '15px', margin: 0, color: '#111827' }}>Monitoring Kuota Tim Hari Ini</h2>
+              <div className="card" style={{ padding: '12px' }}>
                 {Object.keys(postsByUser).length === 0 ? (
                   <p style={{ margin: 0, color: '#6B7280', fontSize: '14px', textAlign: 'center', padding: '16px' }}>Belum ada tim yang menyetor laporan hari ini.</p>
                 ) : (

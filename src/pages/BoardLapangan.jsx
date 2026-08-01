@@ -4,6 +4,7 @@ import { db } from '../services/firebase';
 import { supabase } from '../services/supabase';
 import { useAuth } from '../context/AuthContext';
 import { Plus, MapPin, User, FileText, CheckCircle2, Link as LinkIcon, Edit3, ChevronRight, Activity, Zap, Check, AlertCircle, Users, StickyNote, FileCheck, Camera, X } from 'lucide-react';
+import './BoardLapangan.css';
 
 // STAGES IN PIPELINE
 const STAGES = [
@@ -16,7 +17,9 @@ const STAGES = [
 
 export default function BoardLapangan() {
   const { currentUser, userRole } = useAuth();
-  const isAdmin = userRole === 'admin' || userRole === 'admin_ops';
+  const isAdmin = ['admin', 'admin_ops'].includes(userRole);
+  const isReporter = userRole === 'reporter';
+  const hasAccess = isAdmin || isReporter;
   
   const [tasks, setTasks] = useState([]);
   const [clients, setClients] = useState([]);
@@ -152,7 +155,6 @@ export default function BoardLapangan() {
       fieldNotes: task.fieldNotes || '',
       draftTitle: task.draftTitle || '',
       proofLink: task.proofLink || '',
-      proofLink: task.proofLink || '',
       uploadFiles: [],
       isUploading: false
     });
@@ -282,6 +284,17 @@ export default function BoardLapangan() {
 
   if (loading) return <div className="page-content">Memuat data...</div>;
 
+  if (!hasAccess) {
+    return (
+      <div className="page-content">
+        <div style={{ textAlign: 'center', padding: '64px 0', color: '#9CA3AF' }}>
+          <AlertCircle size={32} style={{ margin: '0 auto 12px auto', opacity: 0.5 }} />
+          <p style={{ margin: 0, fontSize: '15px' }}>Anda tidak memiliki akses ke halaman ini.</p>
+        </div>
+      </div>
+    );
+  }
+
   const todayTasks = tasks.filter(task => {
     if (task.status !== 'selesai') return false;
     if (!task.updatedAt) return false;
@@ -291,64 +304,66 @@ export default function BoardLapangan() {
   });
 
   return (
-    <div className="page-content" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', gap: '24px' }}>
+    <div className="page-content bl-container">
       
       {/* HEADER */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #E5E7EB', paddingBottom: '20px' }}>
+      <div className="bl-header">
         <div>
-          <h1 style={{ fontSize: '1.5rem', margin: '0 0 4px 0', color: '#111827' }}>Operasi Lapangan</h1>
-          <p style={{ color: '#6B7280', fontSize: '14px', margin: 0 }}>Pantau siklus liputan dan laporan secara aktual</p>
+          <h1 className="bl-title">Operasi Lapangan</h1>
+          <p className="bl-subtitle">Pantau siklus liputan dan laporan secara aktual</p>
         </div>
 
-        <div style={{ display: 'flex', gap: '12px' }}>
-          <button onClick={() => openModal('inisiatif')} className="btn-secondary" style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 16px', backgroundColor: '#F9FAFB', border: '1px solid #D1D5DB' }}>
-            <Zap size={16} color="#4B5563" /> Inisiatif Liputan
-          </button>
+        <div className="bl-header-actions">
           {isAdmin && (
-            <button onClick={() => openModal('assigned')} className="btn-primary" style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 16px' }}>
-              <Plus size={16} /> Tugaskan Reporter
-            </button>
+            <>
+              <button onClick={() => openModal('inisiatif')} className="btn-secondary btn-sm" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Zap size={14} color="#4B5563" /> Inisiatif Liputan
+              </button>
+              <button onClick={() => openModal('assigned')} className="btn-primary btn-sm" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Plus size={14} /> Tugaskan Reporter
+              </button>
+            </>
           )}
         </div>
       </div>
 
       {/* LIST VIEW CONTAINER */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      <div className="bl-list-container">
         {tasks.filter(t => t.status !== 'selesai').length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '64px 0', color: '#9CA3AF', backgroundColor: '#F9FAFB', borderRadius: '12px', border: '1px dashed #D1D5DB' }}>
-            <Activity size={32} style={{ margin: '0 auto 12px auto', opacity: 0.5 }} />
-            <p style={{ margin: 0, fontSize: '15px' }}>Belum ada aktivitas lapangan yang aktif.</p>
+          <div className="bl-empty-state">
+            <Activity size={32} className="bl-empty-icon" />
+            <p className="bl-empty-text">Belum ada aktivitas lapangan yang aktif.</p>
           </div>
         ) : (
           tasks.filter(t => t.status !== 'selesai').map(task => (
-            <div key={task.id} className="card" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            <div key={task.id} className="card bl-task-card">
               
               {/* Top Row: Meta Info & Edit */}
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+              <div className="bl-task-top-row">
                 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', flex: 1 }}>
+                <div className="bl-task-info">
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <span style={{ backgroundColor: task.type === 'inisiatif' ? '#F3F4F6' : '#EFF6FF', color: task.type === 'inisiatif' ? '#4B5563' : '#1D4ED8', fontSize: '11px', fontWeight: 600, padding: '4px 8px', borderRadius: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                    <span className={task.type === 'inisiatif' ? 'bl-badge-inisiatif' : 'bl-badge-penugasan'}>
                       {task.type === 'inisiatif' ? 'Inisiatif' : 'Penugasan'}
                     </span>
-                    <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#111827', margin: 0 }}>{task.title}</h3>
+                    <h3 className="bl-task-title-text">{task.title}</h3>
                   </div>
 
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap', color: '#6B7280', fontSize: '13px', marginTop: '4px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><MapPin size={16} />{task.location || '-'}</div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><User size={16} /><span style={{ fontWeight: 500, color: '#374151' }}>{task.assigneeEmail ? task.assigneeEmail.split('@')[0] : '-'}</span></div>
-                    {task.client && <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#059669', backgroundColor: '#D1FAE5', padding: '2px 8px', borderRadius: '4px' }}><strong>Klien:</strong> {task.client}</div>}
+                  <div className="bl-task-meta">
+                    <div className="bl-task-meta-item"><MapPin size={16} />{task.location || '-'}</div>
+                    <div className="bl-task-meta-item"><User size={16} /><span className="bl-task-assignee-text">{task.assigneeEmail ? task.assigneeEmail.split('@')[0] : '-'}</span></div>
+                    {task.client && <div className="bl-task-client-badge"><strong>Klien:</strong> {task.client}</div>}
                   </div>
                   
                   {task.description && (
-                    <div style={{ backgroundColor: '#F9FAFB', padding: '12px', borderRadius: '8px', borderLeft: '3px solid #D1D5DB', marginTop: '8px' }}>
-                      <p style={{ margin: 0, fontSize: '13px', color: '#4B5563', lineHeight: '1.5' }}><strong>Instruksi:</strong> {task.description}</p>
+                    <div className="bl-instruction-box">
+                      <p className="bl-instruction-text"><strong>Instruksi:</strong> {task.description}</p>
                     </div>
                   )}
 
                   {/* ⚠️ ANTI-CONFLICT: WARNING BOX IF ALREADY IN FIELD OR LATER */}
                   {task.status !== 'tugas_baru' && task.teamMembers && (
-                    <div style={{ backgroundColor: '#FEF2F2', padding: '10px 14px', borderRadius: '8px', border: '1px solid #FECACA', display: 'flex', alignItems: 'center', gap: '8px', marginTop: '12px', color: '#991B1B', fontSize: '13px', fontWeight: 500 }}>
+                    <div className="bl-conflict-box">
                       <Users size={16} color="#DC2626" />
                       Sedang diliput oleh: {task.teamMembers}
                     </div>
@@ -356,9 +371,9 @@ export default function BoardLapangan() {
 
                   {/* 📝 FIELD NOTES PREVIEW */}
                   {(task.status === 'draft_berita' || task.status === 'siap_terbit' || task.status === 'selesai') && task.fieldNotes && (
-                    <div style={{ backgroundColor: '#F0FDF4', padding: '12px 16px', borderRadius: '8px', border: '1px solid #BBF7D0', display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '12px', color: '#065F46', fontSize: '13px' }}>
-                      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
-                        <StickyNote size={16} color="#059669" style={{ marginTop: '2px' }} />
+                    <div className="bl-fieldnotes-box">
+                      <div className="bl-fieldnotes-header">
+                        <StickyNote size={16} color="#059669" className="bl-fieldnotes-icon" />
                         <div>
                           <strong>Catatan Lapangan:</strong> {task.fieldNotes}
                         </div>
@@ -367,12 +382,12 @@ export default function BoardLapangan() {
                       {/* --- LEGACY SINGLE IMAGE / NEW MULTI IMAGE RENDER --- */}
                       {(task.imageUrls?.length > 0 || task.imageUrl) && (
                         <div style={{ marginTop: '4px' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', fontWeight: 600, marginBottom: '8px', color: '#047857' }}>
+                          <div className="bl-photo-evidence-title">
                             <Camera size={14} /> Foto Bukti Liputan {task.imageUrls?.length > 1 ? `(${task.imageUrls.length})` : ''}:
                           </div>
-                          <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '4px', maxWidth: '100%' }}>
+                          <div className="bl-photo-gallery">
                             {(task.imageUrls || [task.imageUrl]).map((url, idx) => (
-                              <img key={idx} src={url} alt={`Bukti ${idx+1}`} onClick={() => setLightboxImg(url)} style={{ width: '100px', height: '70px', objectFit: 'cover', borderRadius: '6px', border: '1px solid #A7F3D0', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', cursor: 'pointer', flexShrink: 0 }} />
+                              <img key={idx} src={url} alt={`Bukti ${idx+1}`} onClick={() => setLightboxImg(url)} className="bl-photo-img" />
                             ))}
                           </div>
                         </div>
@@ -381,30 +396,37 @@ export default function BoardLapangan() {
                   )}
 
                   {task.proofLink && (
-                    <div style={{ marginTop: '12px' }}>
-                      <a href={task.proofLink} target="_blank" rel="noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#2563EB', fontSize: '13px', textDecoration: 'none', fontWeight: 500, backgroundColor: '#EFF6FF', padding: '6px 12px', borderRadius: '6px' }}>
+                    <div className="bl-proof-link-container">
+                      <a href={task.proofLink} target="_blank" rel="noreferrer" className="bl-proof-link">
                         <LinkIcon size={14} /> Lihat Berita Terbit
                       </a>
                     </div>
                   )}
                 </div>
 
-                <button onClick={() => openModal(task.type, task)} style={{ background: 'none', border: 'none', color: '#9CA3AF', cursor: 'pointer', padding: '8px' }} title="Edit Data">
-                  <Edit3 size={18} />
-                </button>
+                {isAdmin && (
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <button onClick={() => openModal(task.type, task)} className="bl-edit-btn" title="Edit Data">
+                      <Edit3 size={18} />
+                    </button>
+                    <button onClick={() => handleDeleteTask(task.id)} className="bl-delete-btn" title="Hapus Tugas">
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                )}
               </div>
 
               {/* Bottom Row: Tracker & Action */}
-              <div style={{ display: 'flex', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px', borderTop: '1px solid #F3F4F6', paddingTop: '16px' }}>
-                <div style={{ flex: 1 }}>{renderStepper(task.status)}</div>
-                <div style={{ minWidth: '220px', display: 'flex', justifyContent: 'flex-end' }}>
+              <div className="bl-task-bottom-row">
+                <div className="bl-stepper-container">{renderStepper(task.status)}</div>
+                <div className="bl-action-btn-container">
                   {task.status !== 'selesai' ? (
-                    <button onClick={() => triggerAdvance(task)} className="btn-primary" style={{ padding: '10px 20px', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', width: '100%', justifyContent: 'center' }}>
+                    <button onClick={() => triggerAdvance(task)} className="btn-primary btn-sm" style={{ display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center', width: '100%' }}>
                       {getActionLabel(task.status)}
-                      <ChevronRight size={16} />
+                      <ChevronRight size={14} />
                     </button>
                   ) : (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#10B981', fontWeight: 600, fontSize: '14px', width: '100%', justifyContent: 'center', backgroundColor: '#F0FDF4', padding: '10px 20px', borderRadius: '8px', border: '1px solid #BBF7D0' }}>
+                    <div className="bl-completed-badge">
                       <CheckCircle2 size={18} /> Tugas Selesai
                     </div>
                   )}
@@ -417,34 +439,34 @@ export default function BoardLapangan() {
       </div>
 
       {/* --- MONITORING SELESAI HARI INI --- */}
-      <div style={{ marginTop: '32px' }}>
-        <h2 style={{ fontSize: '1.1rem', color: '#111827', fontWeight: 600, marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+      <div className="bl-monitoring-section">
+        <h2 className="bl-monitoring-title">
           <Activity size={20} color="var(--pw-primary)" />
           Informasi Monitoring Pengerjaan (Selesai Hari Ini)
         </h2>
         {todayTasks.length === 0 ? (
-          <div className="card" style={{ padding: '24px', textAlign: 'center', color: '#6B7280', fontSize: '14px' }}>
+          <div className="card bl-monitoring-empty">
             Belum ada liputan yang selesai hari ini.
           </div>
         ) : (
-          <div className="card" style={{ padding: '24px' }}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          <div className="card bl-monitoring-list">
+            <div className="bl-monitoring-list-container">
               {todayTasks.map(task => (
-                <div key={task.id} style={{ display: 'flex', flexDirection: 'column', backgroundColor: '#F9FAFB', borderRadius: '8px', borderLeft: '4px solid #10B981', overflow: 'hidden' }}>
+                <div key={task.id} className="bl-monitoring-item">
                   <div 
                     onClick={() => setExpandedTaskId(expandedTaskId === task.id ? null : task.id)}
-                    style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '12px', cursor: 'pointer' }}
+                    className="bl-monitoring-item-header"
                   >
                     <CheckCircle2 size={20} color="#10B981" />
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontWeight: 600, fontSize: '14px', color: '#111827' }}>{task.title}</div>
-                      <div style={{ fontSize: '12px', color: '#6B7280', marginTop: '4px' }}>
+                    <div className="bl-monitoring-item-info">
+                      <div className="bl-monitoring-item-title">{task.title}</div>
+                      <div className="bl-monitoring-item-meta">
                         <span style={{ fontWeight: 600 }}>Reporter:</span> {task.assigneeEmail.split('@')[0]} 
                         {task.coAssignees && task.coAssignees.length > 0 ? ` (+${task.coAssignees.length} Rekan)` : ''} | <span style={{ fontWeight: 600 }}>Lokasi:</span> {task.location}
                       </div>
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                      <a href={task.proofLink} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()} style={{ fontSize: '13px', color: '#3B82F6', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px', backgroundColor: '#EFF6FF', padding: '6px 12px', borderRadius: '6px', fontWeight: 500 }}>
+                    <div className="bl-monitoring-item-actions">
+                      <a href={task.proofLink} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()} className="bl-monitoring-link">
                         <LinkIcon size={14} /> Link Berita
                       </a>
                       <div style={{ color: '#9CA3AF', transform: expandedTaskId === task.id ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }}>
@@ -498,30 +520,30 @@ export default function BoardLapangan() {
       {/* --- CREATE/EDIT MODAL --- */}
       {isModalOpen && (
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(4px)' }}>
-          <div className="card" style={{ width: '100%', maxWidth: '500px', margin: '20px' }}>
-            <div style={{ padding: '20px 24px', borderBottom: '1px solid #E5E7EB', display: 'flex', alignItems: 'center', gap: '10px', backgroundColor: '#ffffff', borderTopLeftRadius: '12px', borderTopRightRadius: '12px' }}>
+          <div className="card bl-modal-card">
+            <div className="bl-modal-header">
               {modalType === 'inisiatif' ? <Zap size={20} color="#4B5563" /> : <FileText size={20} color="#111827" />}
-              <h3 style={{ fontSize: '18px', fontWeight: 600, color: '#111827', margin: 0 }}>
+              <h3 className="bl-modal-title">
                 {editingTask ? 'Edit Data Liputan' : (modalType === 'inisiatif' ? 'Inisiatif Mandiri' : 'Tugaskan Reporter')}
               </h3>
             </div>
-            <form onSubmit={handleTaskSubmit} style={{ padding: '24px' }}>
+            <form onSubmit={handleTaskSubmit} className="bl-modal-form">
               <div style={{ marginBottom: '16px' }}>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#374151', marginBottom: '6px' }}>Topik / Judul</label>
-                <input type="text" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} required style={{ width: '100%', padding: '10px 12px', borderRadius: '6px', border: '1px solid #D1D5DB', fontSize: '14px', outline: 'none' }} />
+                <label className="bl-form-label">Topik / Judul</label>
+                <input type="text" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} required className="bl-form-input" />
               </div>
               <div style={{ marginBottom: '16px' }}>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#374151', marginBottom: '6px' }}>Klien Terkait (Opsional)</label>
-                <select value={formData.client} onChange={e => setFormData({...formData, client: e.target.value})} style={{ width: '100%', padding: '10px 12px', borderRadius: '6px', border: '1px solid #D1D5DB', fontSize: '14px', outline: 'none', backgroundColor: '#fff' }}>
+                <label className="bl-form-label">Klien Terkait (Opsional)</label>
+                <select value={formData.client} onChange={e => setFormData({...formData, client: e.target.value})} className="bl-form-select">
                   <option value="">-- Proyek Internal / Tanpa Klien --</option>
                   {clients.map(c => <option key={c} value={c}>{c}</option>)}
                 </select>
               </div>
               <div style={{ marginBottom: '16px' }}>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#374151', marginBottom: '6px' }}>Lokasi</label>
+                <label className="bl-form-label">Lokasi</label>
                 <div style={{ position: 'relative' }}>
-                  <MapPin size={16} color="#9CA3AF" style={{ position: 'absolute', left: '12px', top: '12px' }} />
-                  <input type="text" value={formData.location} onChange={e => setFormData({...formData, location: e.target.value})} required style={{ width: '100%', padding: '10px 12px 10px 36px', borderRadius: '6px', border: '1px solid #D1D5DB', fontSize: '14px', outline: 'none' }} />
+                  <MapPin size={16} color="#9CA3AF" className="bl-form-input-icon" />
+                  <input type="text" value={formData.location} onChange={e => setFormData({...formData, location: e.target.value})} required className="bl-form-input-with-icon" />
                 </div>
               </div>
               {modalType === 'assigned' && isAdmin && (
@@ -566,9 +588,9 @@ export default function BoardLapangan() {
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '32px' }}>
                 {editingTask && isAdmin ? <button type="button" onClick={() => handleDelete(editingTask.id)} style={{ color: '#EF4444', background: 'none', border: 'none', fontSize: '13px', cursor: 'pointer', fontWeight: 600, padding: '8px' }}>Hapus Data</button> : <div></div>}
-                <div style={{ display: 'flex', gap: '12px' }}>
-                  <button type="button" onClick={closeModal} className="btn-secondary" style={{ padding: '10px 16px', borderRadius: '8px', border: '1px solid #D1D5DB', backgroundColor: '#ffffff', cursor: 'pointer', fontWeight: 600 }}>Batal</button>
-                  <button type="submit" className="btn-primary" style={{ padding: '10px 20px', borderRadius: '8px', cursor: 'pointer', fontWeight: 600 }}>Simpan Data</button>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <button type="button" onClick={closeModal} className="btn-secondary btn-sm">Batal</button>
+                  <button type="submit" className="btn-primary btn-sm">Simpan Data</button>
                 </div>
               </div>
             </form>
@@ -647,9 +669,9 @@ export default function BoardLapangan() {
                 </div>
               )}
 
-              <div style={{ display: 'flex', gap: '12px' }}>
-                <button type="button" disabled={advanceModal.isUploading} onClick={() => setAdvanceModal({...advanceModal, isOpen: false})} style={{ flex: 1, padding: '12px', borderRadius: '8px', border: '1px solid #D1D5DB', backgroundColor: '#fff', cursor: 'pointer', fontWeight: 600, color: '#4B5563', opacity: advanceModal.isUploading ? 0.5 : 1 }}>Batal</button>
-                <button type="submit" disabled={advanceModal.isUploading} className="btn-primary" style={{ flex: 1, padding: '12px', borderRadius: '8px', cursor: 'pointer', fontWeight: 600, opacity: advanceModal.isUploading ? 0.5 : 1 }}>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <button type="button" disabled={advanceModal.isUploading} onClick={() => setAdvanceModal({...advanceModal, isOpen: false})} className="btn-secondary btn-sm" style={{ flex: 1, opacity: advanceModal.isUploading ? 0.5 : 1 }}>Batal</button>
+                <button type="submit" disabled={advanceModal.isUploading} className="btn-primary btn-sm" style={{ flex: 1, opacity: advanceModal.isUploading ? 0.5 : 1 }}>
                   {advanceModal.isUploading ? 'Mengunggah...' : 'Konfirmasi'}
                 </button>
               </div>

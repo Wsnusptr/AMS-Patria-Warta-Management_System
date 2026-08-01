@@ -6,7 +6,7 @@ import { useAuth } from '../context/AuthContext';
 
 function ClientsPage() {
   const { currentUser, userRole } = useAuth();
-  const hasAccess = ['admin', 'admin_ops', 'admin_finance'].includes(userRole);
+  const hasAccess = ['admin', 'admin_finance'].includes(userRole);
   const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -154,7 +154,7 @@ function ClientsPage() {
       {/* HEADER */}
       <div className="finance-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <h1 style={{ fontSize: '18px', fontWeight: 600, margin: '0 0 2px 0', color: '#111827' }}>Data Klien</h1>
+          <h1 style={{ fontSize: '1.25rem', fontWeight: 600, margin: '0 0 4px 0', color: '#111827' }}>Data Klien</h1>
           <p style={{ color: '#6B7280', fontSize: '12px', margin: 0 }}>Kelola daftar perusahaan atau klien agensi</p>
         </div>
 

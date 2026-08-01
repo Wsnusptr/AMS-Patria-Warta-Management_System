@@ -6,7 +6,7 @@ import { Plus, Edit3, Trash2, Users, ShieldAlert, Activity, AlertCircle } from '
 
 export default function UsersPage() {
   const { currentUser, userRole } = useAuth();
-  const isAdmin = ['admin', 'admin_ops'].includes(userRole);
+  const isAdmin = ['admin', 'admin_finance'].includes(userRole);
   
   const [usersList, setUsersList] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -117,7 +117,7 @@ export default function UsersPage() {
       case 'admin': return 'Administrator Utama';
       case 'admin_ops': return 'Admin Operasional';
       case 'admin_finance': return 'Admin Keuangan';
-      case 'reporter': return 'Karyawan / Reporter';
+      case 'reporter': return 'Tim Patria Warta';
       default: return 'Guest';
     }
   };
@@ -138,39 +138,39 @@ export default function UsersPage() {
     <div className="page-content" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', gap: '24px' }}>
       
       {/* HEADER */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #E5E7EB', paddingBottom: '20px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #E5E7EB', paddingBottom: '12px' }}>
         <div>
-          <h1 style={{ fontSize: '1.5rem', margin: '0 0 4px 0', color: '#111827' }}>Manajemen Tim & Akun</h1>
-          <p style={{ color: '#6B7280', fontSize: '14px', margin: 0 }}>Kelola peran (role) dan akses anggota tim ke sistem AMS</p>
+          <h1 style={{ fontSize: '1.25rem', margin: '0 0 4px 0', color: '#111827' }}>Manajemen Tim & Akun</h1>
+          <p style={{ color: '#6B7280', fontSize: '13px', margin: 0 }}>Kelola peran (role) dan akses anggota tim ke sistem AMS</p>
         </div>
 
-        <button onClick={() => openModal()} className="btn-primary" style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 16px' }}>
-          <Plus size={16} /> Daftarkan Akses Akun
+        <button onClick={() => openModal()} className="btn-primary" style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '6px 12px', fontSize: '12px', borderRadius: '6px' }}>
+          <Plus size={14} /> Daftarkan Akses Akun
         </button>
       </div>
 
-      <div style={{ backgroundColor: '#FEF2F2', padding: '16px', borderRadius: '8px', border: '1px solid #FECACA', display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+      <div style={{ backgroundColor: '#FEF2F2', padding: '12px', borderRadius: '8px', border: '1px solid #FECACA', display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
         <ShieldAlert color="#DC2626" size={24} style={{ flexShrink: 0, marginTop: '2px' }} />
         <div>
-          <h4 style={{ margin: '0 0 4px 0', color: '#991B1B', fontSize: '14px' }}>Informasi Penting</h4>
-          <p style={{ margin: 0, color: '#B91C1C', fontSize: '13px', lineHeight: 1.5 }}>
+          <h4 style={{ margin: '0 0 4px 0', color: '#991B1B', fontSize: '13px' }}>Informasi Penting</h4>
+          <p style={{ margin: 0, color: '#B91C1C', fontSize: '12px', lineHeight: 1.5 }}>
             Sistem pendaftaran akun asli ditangani otomatis melalui Google Login (Firebase Auth). Menambahkan email di sini bertujuan untuk memberikan peran/akses spesifik (seperti admin atau finance) sebelum atau sesudah pengguna login. Pastikan penulisan email tepat.
           </p>
         </div>
       </div>
 
       {/* LIST USERS */}
-      <div className="card" style={{ padding: '24px' }}>
-        <h3 style={{ margin: '0 0 16px 0', fontSize: '16px', color: '#111827' }}>Daftar Akses Terdaftar</h3>
+      <div className="card-minimal" style={{ padding: '16px' }}>
+        <h3 style={{ margin: '0 0 12px 0', fontSize: '13px', fontWeight: 600, color: '#111827' }}>Daftar Akses Terdaftar</h3>
         
         {usersList.length === 0 ? (
-           <div style={{ textAlign: 'center', padding: '64px 0', color: '#9CA3AF', backgroundColor: '#F9FAFB', borderRadius: '12px', border: '1px dashed #D1D5DB' }}>
-            <Activity size={32} style={{ margin: '0 auto 12px auto', opacity: 0.5 }} />
-            <p style={{ margin: 0, fontSize: '15px' }}>Belum ada data anggota tim terdaftar.</p>
+           <div style={{ textAlign: 'center', padding: '32px 0', color: '#9CA3AF', backgroundColor: '#F9FAFB', borderRadius: '8px', border: '1px dashed #D1D5DB' }}>
+            <Activity size={24} style={{ margin: '0 auto 8px auto', opacity: 0.5 }} />
+            <p style={{ margin: 0, fontSize: '12px' }}>Belum ada data anggota tim terdaftar.</p>
           </div>
         ) : (
           <div className="data-table-container">
-            <table className="data-table">
+            <table className="data-table-compact">
               <thead>
                 <tr>
                   <th>Nama / Profil</th>
@@ -185,16 +185,16 @@ export default function UsersPage() {
                     <td data-label="Nama / Profil" className="table-cell-bold">{user.name || 'Belum Diatur'}</td>
                     <td data-label="Alamat Email">{user.id}</td>
                     <td data-label="Peran Sistem (Role)">
-                      <span className={`badge ${getRoleBadge(user.role)}`}>
+                      <span className={`badge badge-compact ${getRoleBadge(user.role)}`}>
                         {getRoleLabel(user.role)}
                       </span>
                     </td>
                     <td data-label="Aksi" style={{ textAlign: 'right', display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
-                      <button onClick={() => openModal(user)} className="table-action-btn" title="Edit Akses">
-                        <Edit3 size={14} />
+                      <button onClick={() => openModal(user)} className="table-action-btn-compact" title="Edit Akses">
+                        <Edit3 size={12} />
                       </button>
-                      <button onClick={() => handleDelete(user.id)} className="table-action-btn danger" title="Cabut Akses">
-                        <Trash2 size={14} />
+                      <button onClick={() => handleDelete(user.id)} className="table-action-btn-compact danger" title="Cabut Akses">
+                        <Trash2 size={12} />
                       </button>
                     </td>
                   </tr>
@@ -208,20 +208,21 @@ export default function UsersPage() {
       {/* MODAL FORM */}
       {isModalOpen && (
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(4px)' }}>
-          <div className="card" style={{ width: '100%', maxWidth: '450px', margin: '20px' }}>
-            <div style={{ padding: '20px 24px', borderBottom: '1px solid #E5E7EB', display: 'flex', alignItems: 'center', gap: '10px', backgroundColor: '#ffffff', borderTopLeftRadius: '12px', borderTopRightRadius: '12px' }}>
-              <Users size={20} color="#111827" />
-              <h3 style={{ fontSize: '18px', fontWeight: 600, color: '#111827', margin: 0 }}>
+          <div className="card-minimal" style={{ width: '100%', maxWidth: '400px', margin: '16px', background: '#ffffff' }}>
+            <div style={{ padding: '14px 18px', borderBottom: '1px solid #F3F4F6', display: 'flex', alignItems: 'center', gap: '8px', backgroundColor: '#ffffff' }}>
+              <Users size={16} color="#111827" />
+              <h3 style={{ fontSize: '14px', fontWeight: 600, color: '#111827', margin: 0 }}>
                 {editingEmail ? 'Edit Akses Pengguna' : 'Daftarkan Akses Baru'}
               </h3>
             </div>
 
-            <form onSubmit={handleSubmit} style={{ padding: '24px' }}>
-              <div style={{ marginBottom: '16px' }}>
-                <label className="form-label form-label-required">Alamat Email Pengguna</label>
+            <form onSubmit={handleSubmit} style={{ padding: '18px' }}>
+              <div style={{ marginBottom: '12px' }}>
+                <label className="form-label-compact form-label-required">Alamat Email Pengguna</label>
                 <input 
                   type="email" 
-                  className="form-input" 
+                  className="form-input-compact" 
+                  style={{ height: '32px' }} 
                   placeholder="email@example.com" 
                   value={formData.email} 
                   onChange={e => setFormData({...formData, email: e.target.value})} 
@@ -231,21 +232,22 @@ export default function UsersPage() {
                 {editingEmail && <span className="form-hint">Email tidak dapat diubah (digunakan sebagai ID).</span>}
               </div>
 
-              <div style={{ marginBottom: '16px' }}>
-                <label className="form-label">Nama Lengkap / Panggilan (Opsional)</label>
+              <div style={{ marginBottom: '12px' }}>
+                <label className="form-label-compact">Nama Lengkap / Panggilan (Opsional)</label>
                 <input 
                   type="text" 
-                  className="form-input" 
+                  className="form-input-compact" 
+                  style={{ height: '32px' }} 
                   placeholder="Budi Reporter" 
                   value={formData.name} 
                   onChange={e => setFormData({...formData, name: e.target.value})} 
                 />
               </div>
 
-              <div style={{ marginBottom: '16px' }}>
-                <label className="form-label form-label-required">Peran (Role)</label>
-                <select className="form-input form-select" value={formData.role} onChange={e => setFormData({...formData, role: e.target.value})} required>
-                  <option value="reporter">Karyawan / Reporter</option>
+              <div style={{ marginBottom: '12px' }}>
+                <label className="form-label-compact form-label-required">Peran (Role)</label>
+                <select className="form-input-compact" style={{ height: '32px' }} value={formData.role} onChange={e => setFormData({...formData, role: e.target.value})} required>
+                  <option value="reporter">Tim Patria Warta</option>
                   <option value="admin_ops">Admin Operasional</option>
                   <option value="admin_finance">Admin Keuangan</option>
                   <option value="admin">Administrator Utama</option>
@@ -255,9 +257,9 @@ export default function UsersPage() {
                 </div>
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginTop: '32px', gap: '12px' }}>
-                <button type="button" onClick={closeModal} className="btn-secondary">Batal</button>
-                <button type="submit" className="btn-primary">Simpan Akses</button>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginTop: '24px', gap: '8px' }}>
+                <button type="button" onClick={closeModal} className="btn-secondary btn-sm">Batal</button>
+                <button type="submit" className="btn-primary btn-sm">Simpan Akses</button>
               </div>
             </form>
           </div>

@@ -44,20 +44,20 @@
   /* Typography */
   --font-main: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 
-  /* Spacing (8px grid) */
+  /* Spacing (4px grid) */
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
-  --space-4: 16px;
-  --space-5: 20px;
-  --space-6: 24px;
-  --space-8: 32px;
-  --space-10: 40px;
-  --space-12: 48px;
+  --space-4: 12px;
+  --space-5: 16px;
+  --space-6: 20px;
+  --space-8: 24px;
+  --space-10: 32px;
+  --space-12: 40px;
 
   /* Layout */
-  --sidebar-width: 240px;
-  --topbar-height: 56px;
+  --sidebar-width: 220px;
+  --topbar-height: 52px;
 
   /* Radius */
   --radius-sm: 4px;
@@ -84,7 +84,7 @@
 }
 
 html {
-  font-size: 14px;
+  font-size: 13px;
   -webkit-text-size-adjust: 100%;
 }
 
@@ -92,7 +92,7 @@ body {
   background-color: var(--pw-bg-page);
   color: var(--pw-text-primary);
   font-family: var(--font-main);
-  font-size: 14px;
+  font-size: 13px;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -121,7 +121,7 @@ input,
 select,
 textarea {
   font-family: var(--font-main);
-  font-size: 13px;
+  font-size: 12px;
 }
 
 ul, ol {
@@ -177,23 +177,23 @@ table {
 }
 
 .text-xs {
-  font-size: 11px;
+  font-size: 10px;
 }
 
 .text-sm {
-  font-size: 12px;
+  font-size: 11px;
 }
 
 .text-base {
-  font-size: 13px;
+  font-size: 12px;
 }
 
 .text-md {
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .text-lg {
-  font-size: 16px;
+  font-size: 14px;
 }
 
 .text-uppercase {
@@ -2568,8 +2568,13 @@ table {
 
 @media (max-width: 768px) {
   /* TIGHTEN PADDINGS FOR CLEANER JOURNALISTIC LOOK */
+  body {
+    font-size: 13px !important;
+  }
+  
   .page-content {
-    padding: var(--space-3) !important;
+    padding: var(--space-2) !important;
+    gap: var(--space-3) !important;
   }
   
   .card, .card-minimal, .stat-card {
@@ -2581,11 +2586,16 @@ table {
   }
   
   .page-header-title {
-    font-size: 16px !important;
+    font-size: 15px !important;
   }
 
-  .section-header h2 {
+  .section-header h2, h1, h2, h3 {
     font-size: 14px !important;
+  }
+  
+  /* GRID TIGHTENING */
+  .grid-2, .grid-3, .grid-4 {
+    gap: var(--space-2) !important;
   }
 
   /* BUTTONS OPTIMIZATION (Prevent wrap, scale down) */
@@ -2605,6 +2615,21 @@ table {
 
   .filter-bar {
     gap: var(--space-2) !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px;
+  }
+  
+  .filter-bar::-webkit-scrollbar {
+    height: 0px;
+  }
+  
+  /* INPUTS */
+  .form-input, .form-input-compact, select, input {
+    font-size: 12px !important;
+    padding: 6px 8px !important;
+    height: auto !important;
   }
 
   /* BOTTOM SHEET MODALS (Keep the native iOS feel) */

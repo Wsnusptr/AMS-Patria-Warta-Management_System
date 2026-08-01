@@ -48,8 +48,8 @@ function getRoleLabel(role) {
     case 'admin': return 'Administrator';
     case 'admin_ops': return 'Admin Operasional';
     case 'admin_finance': return 'Admin Keuangan';
-    case 'reporter': return 'Reporter';
-    default: return 'Guest';
+    case 'reporter': return 'Tim Patria Warta';
+    default: return 'Tamu / Guest';
   }
 }
 
@@ -215,23 +215,23 @@ export default function Dashboard() {
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '20px' }}>
               {loadingAnnouncements ? (
-                <div className="empty-state" style={{ padding: '24px 0' }}>
+                <div className="empty-state" style={{ padding: '16px 0' }}>
                   <span className="loading-spinner" />
                 </div>
               ) : announcements.length === 0 ? (
-                <div style={{ textAlign: 'center', padding: '32px 0', color: '#9CA3AF', backgroundColor: '#F9FAFB', borderRadius: '8px', border: '1px dashed #D1D5DB' }}>
-                  <p style={{ margin: 0, fontSize: '13px' }}>Belum ada pengumuman.</p>
+                <div style={{ textAlign: 'center', padding: '16px 0', color: '#9CA3AF', backgroundColor: '#F9FAFB', borderRadius: '6px', border: '1px dashed #D1D5DB' }}>
+                  <p style={{ margin: 0, fontSize: '12px' }}>Belum ada pengumuman.</p>
                 </div>
               ) : (
                 announcements.map(item => (
-                  <div key={item.id} style={{ padding: '16px', borderRadius: '8px', border: '1px solid #E5E7EB', backgroundColor: '#F9FAFB' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
-                      <h4 style={{ margin: 0, fontSize: '14px', color: '#111827', fontWeight: 600 }}>{item.title}</h4>
-                      <span style={{ fontSize: '12px', color: '#6B7280', fontWeight: 500, whiteSpace: 'nowrap', marginLeft: '12px' }}>
+                  <div key={item.id} style={{ padding: '12px', borderRadius: '6px', border: '1px solid #E5E7EB', backgroundColor: '#F9FAFB' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '6px' }}>
+                      <h4 style={{ margin: 0, fontSize: '13px', color: '#111827', fontWeight: 600 }}>{item.title}</h4>
+                      <span style={{ fontSize: '11px', color: '#6B7280', fontWeight: 500, whiteSpace: 'nowrap', marginLeft: '12px' }}>
                         {item.createdAt ? getRelativeTime(item.createdAt) : 'Baru saja'}
                       </span>
                     </div>
-                    <p style={{ margin: 0, fontSize: '13px', color: '#4B5563', lineHeight: 1.5, whiteSpace: 'pre-wrap' }}>
+                    <p style={{ margin: 0, fontSize: '12px', color: '#4B5563', lineHeight: 1.5, whiteSpace: 'pre-wrap' }}>
                       {item.content}
                     </p>
                   </div>
