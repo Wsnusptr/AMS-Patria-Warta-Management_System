@@ -69,7 +69,7 @@ const PAGE_TITLES = {
 };
 
 export default function Layout() {
-  const { currentUser, userRole, logout } = useAuth();
+  const { currentUser, userRole, userName, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -90,7 +90,7 @@ export default function Layout() {
   const closeSidebar = () => setSidebarOpen(false);
 
   const pageTitle = PAGE_TITLES[location.pathname] || 'Dashboard';
-  const emailInitial = currentUser.email ? currentUser.email.charAt(0).toUpperCase() : '?';
+  const emailInitial = userName ? userName.charAt(0).toUpperCase() : (currentUser.email ? currentUser.email.charAt(0).toUpperCase() : '?');
   const showManagement = ADMIN_ROLES.includes(userRole);
 
   return (
@@ -111,7 +111,7 @@ export default function Layout() {
         <div className="sidebar-user-info">
           <div className="sidebar-user-avatar">{emailInitial}</div>
           <div className="sidebar-user-details">
-            <p className="sidebar-user-name">{currentUser.email}</p>
+            <p className="sidebar-user-name">{userName || currentUser.email}</p>
             <span className="sidebar-user-role">{userRole ? userRole.replace('_', ' ') : 'Guest'}</span>
           </div>
         </div>

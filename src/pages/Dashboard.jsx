@@ -54,7 +54,7 @@ function getRoleLabel(role) {
 }
 
 export default function Dashboard() {
-  const { currentUser, userRole } = useAuth();
+  const { currentUser, userRole, userName } = useAuth();
 
   const [totalTasks, setTotalTasks] = useState(0);
   const [doneTasks, setDoneTasks] = useState(0);
@@ -146,7 +146,7 @@ export default function Dashboard() {
       <div className="dashboard-header">
         <div>
           <h1 className="dashboard-greeting">
-            Selamat datang, <span className="text-gold">{currentUser?.email}</span>
+            Selamat datang, <span className="text-gold">{userName || (currentUser?.email ? currentUser.email.split('@')[0] : 'User')}</span>
           </h1>
           <p className="dashboard-date">{getIndonesianDate()}</p>
         </div>

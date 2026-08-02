@@ -12,6 +12,7 @@ export function useAuth() {
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
   const [userRole, setUserRole] = useState(null);
+  const [userName, setUserName] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -28,9 +29,11 @@ export function AuthProvider({ children }) {
             if (docSnap.exists()) {
               console.log("Dokumen Ditemukan! Data:", docSnap.data());
               setUserRole(docSnap.data().role);
+              setUserName(docSnap.data().name);
             } else {
               console.warn("User role not found in Firestore untuk email:", user.email.toLowerCase());
               setUserRole('guest'); // Fallback
+              setUserName(user.email.split('@')[0]);
             }
           } catch (error) {
           console.error("Error fetching user role:", error);
@@ -38,6 +41,7 @@ export function AuthProvider({ children }) {
       } else {
         setCurrentUser(null);
         setUserRole(null);
+        setUserName(null);
       }
       setLoading(false);
     });
@@ -56,6 +60,7 @@ export function AuthProvider({ children }) {
   const value = {
     currentUser,
     userRole,
+    userName,
     login,
     logout
   };
