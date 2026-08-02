@@ -16,7 +16,7 @@ const STAGES = [
 ];
 
 export default function BoardLapangan() {
-  const { currentUser, userRole } = useAuth();
+  const { currentUser, userRole, userName } = useAuth();
   const isAdmin = ['admin', 'admin_ops'].includes(userRole);
   const isReporter = userRole === 'reporter';
   const hasAccess = isAdmin || isReporter;
@@ -119,7 +119,7 @@ export default function BoardLapangan() {
         });
 
         await addDoc(collection(db, 'activity_log'), {
-          userName: currentUser.email.split('@')[0],
+          userName: userName || currentUser.email.split('@')[0],
           userEmail: currentUser.email,
           action: modalType === 'inisiatif' ? `Berinisiatif liputan: ${formData.title}` : `Menugaskan liputan: ${formData.title}`,
           timestamp: serverTimestamp()
@@ -222,7 +222,7 @@ export default function BoardLapangan() {
       await updateDoc(taskRef, updatePayload);
 
       await addDoc(collection(db, 'activity_log'), {
-        userName: currentUser.email.split('@')[0],
+        userName: userName || currentUser.email.split('@')[0],
         userEmail: currentUser.email,
         action: actionLog,
         timestamp: serverTimestamp()

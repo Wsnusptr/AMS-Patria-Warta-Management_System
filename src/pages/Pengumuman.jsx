@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { Plus, Edit3, Trash2, Megaphone, Activity, AlertCircle } from 'lucide-react';
 
 export default function Pengumuman() {
-  const { currentUser, userRole } = useAuth();
+  const { currentUser, userRole, userName } = useAuth();
   const isAdmin = ['admin'].includes(userRole);
   
   const [announcements, setAnnouncements] = useState([]);
@@ -70,7 +70,7 @@ export default function Pengumuman() {
         });
         
         await addDoc(collection(db, 'activity_log'), {
-          userName: currentUser.email.split('@')[0],
+          userName: userName || currentUser.email.split('@')[0],
           userEmail: currentUser.email,
           action: `Membuat pengumuman: ${formData.title}`,
           timestamp: serverTimestamp()

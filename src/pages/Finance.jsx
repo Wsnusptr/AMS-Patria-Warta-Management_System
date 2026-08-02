@@ -7,7 +7,7 @@ import { Plus, Edit3, Trash2, Wallet, TrendingUp, TrendingDown, Activity, AlertC
 // CATEGORIES are now dynamic based on Clients
 
 export default function Finance() {
-  const { currentUser, userRole } = useAuth();
+  const { currentUser, userRole, userName } = useAuth();
   const hasAccess = ['admin', 'admin_finance'].includes(userRole);
   
   const [records, setRecords] = useState([]);
@@ -112,7 +112,7 @@ export default function Finance() {
       const payload = {
         ...formData,
         amount: Number(formData.amount),
-        recordedBy: currentUser.email,
+        recordedBy: userName || currentUser.email,
         updatedAt: serverTimestamp()
       };
 
@@ -125,7 +125,7 @@ export default function Finance() {
         });
         
         await addDoc(collection(db, 'activity_log'), {
-          userName: currentUser.email.split('@')[0],
+          userName: userName || currentUser.email.split('@')[0],
           userEmail: currentUser.email,
           action: `Mencatat ${formData.type} keuangan: Rp ${Number(formData.amount).toLocaleString('id-ID')}`,
           timestamp: serverTimestamp()

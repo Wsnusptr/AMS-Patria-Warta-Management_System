@@ -7,7 +7,7 @@ import { Plus, CheckCircle2, Link as LinkIcon, Trash2, Send, AlertCircle, Award 
 const PLATFORMS = ['Instagram', 'TikTok', 'YouTube', 'Facebook'];
 
 export default function BoardSosmed() {
-  const { currentUser, userRole } = useAuth();
+  const { currentUser, userRole, userName } = useAuth();
   const isAdmin = ['admin', 'admin_ops'].includes(userRole);
   const isReporter = userRole === 'reporter';
   const hasAccess = isAdmin || isReporter;
@@ -59,7 +59,7 @@ export default function BoardSosmed() {
       await addDoc(collection(db, 'sosmed_topics'), {
         title: newTopic.title,
         description: newTopic.description,
-        author: currentUser.email,
+        author: userName || currentUser.email,
         createdAt: serverTimestamp()
       });
       setNewTopic({ title: '', description: '' });
@@ -123,7 +123,7 @@ export default function BoardSosmed() {
 
       // Simpan log aktivitas (untuk Dashboard)
       await addDoc(collection(db, 'activity_log'), {
-        userName: currentUser.email.split('@')[0],
+        userName: userName || currentUser.email.split('@')[0],
         userEmail: currentUser.email,
         action: `Mengunggah konten ${data.platform}: ${data.content}`,
         timestamp: serverTimestamp()

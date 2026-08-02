@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { Plus, Edit3, Trash2, Users, ShieldAlert, Activity, AlertCircle } from 'lucide-react';
 
 export default function UsersPage() {
-  const { currentUser, userRole } = useAuth();
+  const { currentUser, userRole, userName } = useAuth();
   const isAdmin = ['admin', 'admin_finance'].includes(userRole);
   
   const [usersList, setUsersList] = useState([]);
@@ -82,7 +82,7 @@ export default function UsersPage() {
       }, { merge: true });
 
       await addDoc(collection(db, 'activity_log'), {
-        userName: currentUser.email.split('@')[0],
+        userName: userName || currentUser.email.split('@')[0],
         userEmail: currentUser.email,
         action: editingEmail ? `Mengubah akses peran untuk ${normalizedEmail}` : `Mendaftarkan akses baru untuk ${normalizedEmail}`,
         timestamp: serverTimestamp()
@@ -104,7 +104,7 @@ export default function UsersPage() {
       await deleteDoc(doc(db, 'users', emailId));
       
       await addDoc(collection(db, 'activity_log'), {
-        userName: currentUser.email.split('@')[0],
+        userName: userName || currentUser.email.split('@')[0],
         userEmail: currentUser.email,
         action: `Mencabut akses pengguna ${emailId}`,
         timestamp: serverTimestamp()

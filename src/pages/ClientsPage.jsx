@@ -5,7 +5,7 @@ import { Users, Plus, Edit3, Trash2, Building, Activity, AlertCircle } from 'luc
 import { useAuth } from '../context/AuthContext';
 
 function ClientsPage() {
-  const { currentUser, userRole } = useAuth();
+  const { currentUser, userRole, userName } = useAuth();
   const hasAccess = ['admin', 'admin_finance'].includes(userRole);
   const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -90,7 +90,7 @@ function ClientsPage() {
           ...formData,
           createdAt: serverTimestamp(),
           updatedAt: serverTimestamp(),
-          createdBy: currentUser.email
+          createdBy: userName || currentUser.email
         });
         docId = docRef.id;
         logAction = `Menambahkan klien baru: ${formData.name}`;
@@ -98,7 +98,7 @@ function ClientsPage() {
 
       // Record Activity Log
       await addDoc(collection(db, 'activity_log'), {
-        userName: currentUser.email.split('@')[0],
+        userName: userName || currentUser.email.split('@')[0],
         userEmail: currentUser.email,
         action: logAction,
         module: 'Manajemen Klien',
@@ -118,7 +118,7 @@ function ClientsPage() {
         await deleteDoc(doc(db, 'clients', id));
         
         await addDoc(collection(db, 'activity_log'), {
-          userName: currentUser.email.split('@')[0],
+          userName: userName || currentUser.email.split('@')[0],
           userEmail: currentUser.email,
           action: `Menghapus klien: ${name}`,
           module: 'Manajemen Klien',
