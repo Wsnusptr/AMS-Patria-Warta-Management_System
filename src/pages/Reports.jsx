@@ -90,7 +90,7 @@ export default function Reports() {
   const getSdmRows = () => {
     const filteredTasks = tasks.filter(t => filterByDate(null, t.createdAt || t.updatedAt));
     const userStats = {};
-    users.forEach(u => { userStats[u.email] = { email: u.email, name: u.name || u.email.split('@')[0], totalTugas: 0, selesai: 0, inisiatif: 0, taskList: [] }; });
+    users.forEach(u => { userStats[u.id] = { email: u.id, name: u.name || u.id.split('@')[0], totalTugas: 0, selesai: 0, inisiatif: 0, taskList: [] }; });
     filteredTasks.forEach(t => {
       const emails = [t.assigneeEmail, ...(t.coAssignees || [])].filter(Boolean);
       emails.forEach(email => {
