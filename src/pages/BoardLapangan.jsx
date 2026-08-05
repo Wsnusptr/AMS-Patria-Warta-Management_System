@@ -550,8 +550,13 @@ export default function BoardLapangan() {
                 <div style={{ marginBottom: '16px' }}>
                   <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#374151', marginBottom: '6px' }}>Tugaskan Kepada (Email)</label>
                   <div style={{ position: 'relative' }}>
-                    <User size={16} color="#9CA3AF" style={{ position: 'absolute', left: '12px', top: '12px' }} />
-                    <input type="email" value={formData.assigneeEmail} onChange={e => setFormData({...formData, assigneeEmail: e.target.value})} required style={{ width: '100%', padding: '10px 12px 10px 36px', borderRadius: '6px', border: '1px solid #D1D5DB', fontSize: '14px', outline: 'none' }} />
+                    <User size={16} color="#9CA3AF" style={{ position: 'absolute', left: '12px', top: '12px', zIndex: 1 }} />
+                    <select value={formData.assigneeEmail} onChange={e => setFormData({...formData, assigneeEmail: e.target.value})} required style={{ width: '100%', padding: '10px 12px 10px 36px', borderRadius: '6px', border: '1px solid #D1D5DB', fontSize: '14px', outline: 'none', appearance: 'none', backgroundColor: '#fff', cursor: 'pointer' }}>
+                      <option value="">Pilih Anggota Tim Lapangan</option>
+                      {users.filter(u => !u.divisi || u.divisi === 'lapangan' || u.divisi === 'semua').map(u => (
+                        <option key={u.email} value={u.email}>{u.name ? `${u.name} (${u.email})` : u.email}</option>
+                      ))}
+                    </select>
                   </div>
                 </div>
               )}
@@ -559,8 +564,8 @@ export default function BoardLapangan() {
                 <div style={{ marginBottom: '16px' }}>
                   <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#374151', marginBottom: '6px' }}>Rekan Tim Liputan (Opsional)</label>
                   <div style={{ border: '1px solid #D1D5DB', borderRadius: '6px', padding: '10px', maxHeight: '120px', overflowY: 'auto', backgroundColor: '#fff' }}>
-                    {users.filter(u => u.email !== currentUser.email).length > 0 ? (
-                      users.filter(u => u.email !== currentUser.email).map(u => (
+                    {users.filter(u => u.email !== currentUser.email && (!u.divisi || u.divisi === 'lapangan' || u.divisi === 'semua')).length > 0 ? (
+                      users.filter(u => u.email !== currentUser.email && (!u.divisi || u.divisi === 'lapangan' || u.divisi === 'semua')).map(u => (
                         <label key={u.email} style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px', fontSize: '13px', cursor: 'pointer', color: '#4B5563' }}>
                           <input type="checkbox" 
                             checked={formData.coAssignees.includes(u.email)}

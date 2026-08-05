@@ -16,6 +16,7 @@ export default function UsersPage() {
   const [formData, setFormData] = useState({
     email: '',
     role: 'reporter',
+    divisi: 'lapangan',
     name: ''
   });
 
@@ -51,6 +52,7 @@ export default function UsersPage() {
       setFormData({
         email: user.id, // ID of document is email
         role: user.role || 'reporter',
+        divisi: user.divisi || 'lapangan',
         name: user.name || ''
       });
     } else {
@@ -58,6 +60,7 @@ export default function UsersPage() {
       setFormData({
         email: '',
         role: 'reporter',
+        divisi: 'lapangan',
         name: ''
       });
     }
@@ -77,6 +80,7 @@ export default function UsersPage() {
       // Save to 'users' collection with email as doc ID
       await setDoc(doc(db, 'users', normalizedEmail), {
         role: formData.role,
+        divisi: formData.divisi,
         name: formData.name,
         updatedAt: serverTimestamp()
       }, { merge: true });
@@ -132,6 +136,15 @@ export default function UsersPage() {
     }
   };
 
+  const getDivisiLabel = (divisi) => {
+    switch(divisi) {
+      case 'lapangan': return 'Tim Lapangan';
+      case 'sosmed': return 'Tim Sosial Media';
+      case 'semua': return 'Semua Divisi';
+      default: return 'Tim Lapangan';
+    }
+  };
+
   if (loading) return <div className="page-content">Memuat data...</div>;
 
   return (
@@ -176,6 +189,7 @@ export default function UsersPage() {
                   <th>Nama / Profil</th>
                   <th>Alamat Email</th>
                   <th>Peran Sistem (Role)</th>
+                  <th>Divisi</th>
                   <th style={{ textAlign: 'right' }}>Aksi</th>
                 </tr>
               </thead>
@@ -188,6 +202,9 @@ export default function UsersPage() {
                       <span className={`badge badge-compact ${getRoleBadge(user.role)}`}>
                         {getRoleLabel(user.role)}
                       </span>
+                    </td>
+                    <td data-label="Divisi" style={{ fontSize: '13px', color: '#4B5563', fontWeight: 500 }}>
+                      {getDivisiLabel(user.divisi)}
                     </td>
                     <td data-label="Aksi" style={{ textAlign: 'right', display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
                       <button onClick={() => openModal(user)} className="table-action-btn-compact" title="Edit Akses">
@@ -255,6 +272,15 @@ export default function UsersPage() {
                 <div style={{ marginTop: '8px', fontSize: '11px', color: '#6B7280', lineHeight: 1.4 }}>
                   <strong>Catatan:</strong> Administrator dapat mengatur sistem penuh, Operasional mengurus task, Keuangan mengurus transaksi.
                 </div>
+              </div>
+
+              <div style={{ marginBottom: '12px' }}>
+                <label className="form-label-compact form-label-required">Divisi Kerja</label>
+                <select className="form-input-compact" style={{ height: '32px' }} value={formData.divisi} onChange={e => setFormData({...formData, divisi: e.target.value})} required>
+                  <option value="lapangan">Tim Lapangan (Redaksi/Wartawan)</option>
+                  <option value="sosmed">Tim Sosial Media (Konten Kreator)</option>
+                  <option value="semua">Semua Divisi (Manajemen/Direksi)</option>
+                </select>
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginTop: '24px', gap: '8px' }}>
