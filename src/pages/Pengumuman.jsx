@@ -129,7 +129,7 @@ export default function Pengumuman() {
                 </p>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '16px', color: '#9CA3AF', fontSize: '11px' }}>
-                  <span>Dibuat oleh: {item.authorEmail.split('@')[0]}</span>
+                  <span>Dibuat oleh: {item.authorEmail ? item.authorEmail.split('@')[0] : 'Admin'}</span>
                   <span>•</span>
                   <span>{item.createdAt ? new Date(item.createdAt.toDate()).toLocaleString('id-ID') : 'Baru saja'}</span>
                 </div>

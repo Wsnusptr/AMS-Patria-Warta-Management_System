@@ -461,7 +461,7 @@ export default function BoardLapangan() {
                     <div className="bl-monitoring-item-info">
                       <div className="bl-monitoring-item-title">{task.title}</div>
                       <div className="bl-monitoring-item-meta">
-                        <span style={{ fontWeight: 600 }}>Reporter:</span> {task.assigneeEmail.split('@')[0]} 
+                        <span style={{ fontWeight: 600 }}>Reporter:</span> {task.assigneeEmail ? task.assigneeEmail.split('@')[0] : '-'}
                         {task.coAssignees && task.coAssignees.length > 0 ? ` (+${task.coAssignees.length} Rekan)` : ''} | <span style={{ fontWeight: 600 }}>Lokasi:</span> {task.location}
                       </div>
                     </div>

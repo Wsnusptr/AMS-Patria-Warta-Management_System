@@ -237,7 +237,7 @@ export default function Finance() {
                     <td data-label="Jumlah" style={{ color: record.type === 'pemasukan' ? '#10B981' : '#EF4444', fontWeight: 600 }}>
                       {record.type === 'pemasukan' ? '+' : '-'}{formatRupiah(record.amount)}
                     </td>
-                    <td data-label="Dicatat" className="table-cell-muted">{record.recordedBy.split('@')[0]}</td>
+                    <td data-label="Dicatat" className="table-cell-muted">{record.recordedBy ? record.recordedBy.split('@')[0] : '-'}</td>
                     <td data-label="Aksi" style={{ textAlign: 'right' }}>
                       <button onClick={() => openModal(record)} className="table-action-btn-compact" title="Edit Data">
                         <Edit3 size={12} />

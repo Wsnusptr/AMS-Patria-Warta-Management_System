@@ -382,7 +382,7 @@ export default function BoardSosmed() {
                     )}
                   </div>
                   {topic.description && <p style={{ margin: 0, fontSize: '13px', color: '#4B5563', lineHeight: '1.5' }}>{topic.description}</p>}
-                  <span style={{ fontSize: '11px', color: '#9CA3AF' }}>Oleh: {topic.author.split('@')[0]}</span>
+                  <span style={{ fontSize: '11px', color: '#9CA3AF' }}>Oleh: {topic.author ? topic.author.split('@')[0] : 'Admin'}</span>
                 </div>
               ))
             )}
