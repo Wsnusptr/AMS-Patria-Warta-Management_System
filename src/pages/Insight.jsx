@@ -271,6 +271,32 @@ export default function Insight() {
         });
       });
     });
+    // Combine with Social Posts workload
+    filteredPosts.forEach(doc => {
+      const data = doc.data();
+      const isCompleted = data.status === 'Published' || data.status === 'Selesai' || data.status === 'published' || !data.status;
+      
+      const email = data.assigneeEmail;
+      if (email) {
+        const name = email.split('@')[0];
+        if (!teamMap[name]) {
+          teamMap[name] = { name, Tugas: 0, Selesai: 0, details: [] };
+        }
+        if (isCompleted) {
+          teamMap[name].Selesai += 1;
+        } else {
+          teamMap[name].Tugas += 1;
+        }
+        teamMap[name].details.push({
+          Tanggal: data.date ? (data.date.toDate ? data.date.toDate().toLocaleDateString('id-ID') : new Date(data.date).toLocaleDateString('id-ID')) : '-',
+          Reporter: name,
+          Tugas: `[Sosmed] ${data.content ? data.content.substring(0, 30) + '...' : data.platform}`,
+          Lokasi: data.platform || 'Sosial Media',
+          Status: data.status || 'Published'
+        });
+      }
+    });
+
     const workload = Object.values(teamMap).sort((a,b) => (b.Tugas + b.Selesai) - (a.Tugas + a.Selesai));
     setTeamWorkload(workload.length ? workload : [{ name: 'Data Kosong', Tugas: 0, details: [] }]);
 
