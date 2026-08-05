@@ -3,7 +3,7 @@ import { collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, query, order
 import { db } from '../services/firebase';
 import { supabase } from '../services/supabase';
 import { useAuth } from '../context/AuthContext';
-import { Plus, MapPin, User, FileText, CheckCircle2, Link as LinkIcon, Edit3, ChevronRight, Activity, Zap, Check, AlertCircle, Users, StickyNote, FileCheck, Camera, X } from 'lucide-react';
+import { Plus, MapPin, User, FileText, CheckCircle2, Link as LinkIcon, Edit3, ChevronRight, Activity, Zap, Check, AlertCircle, Users, StickyNote, FileCheck, Camera, X, Trash2 } from 'lucide-react';
 import './BoardLapangan.css';
 
 // STAGES IN PIPELINE
@@ -409,7 +409,7 @@ export default function BoardLapangan() {
                     <button onClick={() => openModal(task.type, task)} className="bl-edit-btn" title="Edit Data">
                       <Edit3 size={18} />
                     </button>
-                    <button onClick={() => handleDeleteTask(task.id)} className="bl-delete-btn" title="Hapus Tugas">
+                    <button onClick={() => handleDelete(task.id)} className="bl-delete-btn" title="Hapus Tugas">
                       <Trash2 size={16} />
                     </button>
                   </div>
